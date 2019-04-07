@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void updateUI(GoogleSignInAccount account) {
         if(account != null) {
-            Toast.makeText(this, account.getEmail(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, account.getEmail(), Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, MainActivity.class);
             startActivityForResult(intent, 101);
 
