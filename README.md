@@ -2,10 +2,9 @@
 Made by Hansung University
 
 
-
 # branch 관련 명령어와 절차
 
-## 명령어
+명령어
 
 git branch          : 모든 branch를 보여주고 현재 branch가 무엇인지 보여줌
 
@@ -19,7 +18,7 @@ git branch -d name  : name에 해당하는 branch를 삭제함
 
 
 
-## 사용 절차
+사용 절차
 
 1. git branch name 을 이용하여 branch를 생성한다.
 2. git checkout name 을 이용하여 임의의 branch를 생성한다.
