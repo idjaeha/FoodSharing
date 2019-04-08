@@ -4,6 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#AAD">
+
+    <ac.kr.hansung.FoodSharing.BitmapButton
+        android:id="@+id/bitmapButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:text=""
+        />
+
     <TextView
         android:text="프래그먼트 1"
         android:layout_width="wrap_content"
