@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     MapsFragment mapsFragment;
     ChattingFragment chattingFragment;
     RecommendFragment recommendFragment;
+    StoreListFragment storeListFragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         myInfoFragment = new MyInfoFragment();
         recommendFragment = new RecommendFragment();
         chattingFragment = new ChattingFragment();
+        storeListFragment = new StoreListFragment();
 
         setFrag(R.id.navigation_home);
     }
@@ -67,11 +69,11 @@ public class MainActivity extends AppCompatActivity {
         tran = fm.beginTransaction();
         switch (n){
             case R.id.navigation_home:
-                tran.replace(R.id.frag_frame, mainFragment);  //replace의 매개변수는 (프래그먼트를 담을 영역 id, 프래그먼트 객체) 입니다.
+                tran.replace(R.id.frag_frame, storeListFragment);
                 tran.commit();
                 break;
             case R.id.navigation_maps:
-                tran.replace(R.id.frag_frame, mapsFragment);  //replace의 매개변수는 (프래그먼트를 담을 영역 id, 프래그먼트 객체) 입니다.
+                tran.replace(R.id.frag_frame, mapsFragment);
                 tran.commit();
                 break;
             case R.id.navigation_chatting:
