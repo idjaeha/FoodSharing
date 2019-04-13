@@ -8,14 +8,12 @@ Made by Hansung University
 2. 윈도우 + r 를 눌러 실행창에 cmd를 입력 후 원하는 경로로 이동 후 본인이 원하는 기능을 사용한다.
 
 
-
-github에서 처음 불러올때
+- github에서 처음 불러올때
 
 git clone https://github.com/idjaeha/FoodSharing.git
 
 
-
-github에 저장
+- github에 저장
 
 git add . 
 현재 디렉토리에 있는 모든 파일을 git에 저장
@@ -27,8 +25,7 @@ git push
 해당 파일에 맞는 github 저장소에 저장
 
 
-
-github에서 불러오기
+- github에서 불러오기
 
 git pull
 
@@ -36,7 +33,7 @@ git pull
 
 # branch 관련 명령어와 절차
 
-명령어
+- 명령어
 
 git branch          : 모든 branch를 보여주고 현재 branch가 무엇인지 보여줌
 
@@ -50,7 +47,7 @@ git branch -d name  : name에 해당하는 branch를 삭제함
 
 
 
-사용 절차
+- 사용 절차
 
 1. git branch name 을 이용하여 branch를 생성한다.
 2. git checkout name 을 이용하여 임의의 branch를 생성한다.
