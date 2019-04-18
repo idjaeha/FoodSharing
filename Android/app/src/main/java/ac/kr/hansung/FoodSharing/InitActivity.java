@@ -1,5 +1,6 @@
 package ac.kr.hansung.FoodSharing;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +22,8 @@ public class InitActivity extends AppCompatActivity {
 
     private void initApp() {
 
-        Intent intent = new Intent(this, LoginActivity.class);
+        //Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivityForResult(intent, 101);
     }
 }
