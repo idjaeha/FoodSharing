@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#AAD">
 
-    <ac.kr.hansung.FoodSharing.BitmapButton
+    <Button
         android:id="@+id/bitmapButton1"
         android:layout_width="83dp"
         android:layout_height="80dp"

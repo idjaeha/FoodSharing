@@ -9,31 +9,30 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 public class MainFragment extends Fragment {
     View view;
-    BitmapButton bitmapButton;
+    Button bitmapButton;
     FragmentManager fm;
     FragmentTransaction tran;
-    StoreListFragment storeListFragment;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        bitmapButton = (BitmapButton) getActivity().findViewById(R.id.bitmapButton1);
-        storeListFragment = new StoreListFragment();
+        bitmapButton = (Button) view.findViewById(R.id.bitmapButton1);
         fm = getActivity().getSupportFragmentManager();
         tran = fm.beginTransaction();
-        /*
+
         bitmapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tran.replace(R.id.frag_frame, storeListFragment);
-                tran.commit();
+                Intent intent = new Intent(getContext(), StoreListActivity.class);
+                startActivityForResult(intent, 101);
             }
         });
-        */
+
 
         return view;
     }

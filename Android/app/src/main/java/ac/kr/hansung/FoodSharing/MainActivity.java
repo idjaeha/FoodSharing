@@ -1,13 +1,19 @@
 package ac.kr.hansung.FoodSharing;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.content.pm.Signature;
+
+import java.security.MessageDigest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     MapsFragment mapsFragment;
     ChattingFragment chattingFragment;
     RecommendFragment recommendFragment;
-    StoreListFragment storeListFragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -59,9 +64,26 @@ public class MainActivity extends AppCompatActivity {
         myInfoFragment = new MyInfoFragment();
         recommendFragment = new RecommendFragment();
         chattingFragment = new ChattingFragment();
-        storeListFragment = new StoreListFragment();
+
+        //HashKey값을 얻기 위한 코드 (SHA)
+        //getHashKeySHA();
 
         setFrag(R.id.navigation_home);
+    }
+
+    private void getHashKeySHA() {
+        try{
+            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md;
+                md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String key = new String(Base64.encode(md.digest(), 0));
+                Log.d("Hash key: ", key);
+            }
+        } catch (Exception e){
+            Log.e("name not found", e.toString());
+        }
     }
 
     public void setFrag(int n){    //프래그먼트를 교체하는 작업을 하는 메소드를 만들었습니다
@@ -69,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         tran = fm.beginTransaction();
         switch (n){
             case R.id.navigation_home:
-                tran.replace(R.id.frag_frame, storeListFragment);
+                tran.replace(R.id.frag_frame, mainFragment);
                 tran.commit();
                 break;
             case R.id.navigation_maps:
