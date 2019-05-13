@@ -7,6 +7,10 @@
     </uses-permission>
     <meta-data android:name="com.kakao.sdk.AppKey" android:value="7589b6ee136fb4ca833c54db4912602c"/>
 
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <meta-data android:name="ac.kr.hansung.FoodSharing" android:value="cc3b45993f2774091ea326cf4d6aa8c5"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,9 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".StoreListActivity"></activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main"></activity>
+            android:label="@string/title_activity_main" />
         <activity android:name=".InitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
