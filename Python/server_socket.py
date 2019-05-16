@@ -17,18 +17,34 @@ class FoodServer:
         pass
 
     def get_list_client_socket(self):
+        """
+        클라이언트 소켓 정보를 리스트로 반환합니다.
+        """
         return self.list_client_socket
 
     def create_connector(self):
+        """
+        소켓 서버의 커넥터를 생성합니다.
+        """
         self.client_connector = FoodServerConnector(self.list_client_socket, self.list_client_receiver)
         self.client_connector.start()
 
     def exit_server(self):
+        """
+        서버를 종료합니다.
+        """
         for client_socket in self.list_client_receiver:
             client_socket.exit_receiver()
         print('[NOW] : Receiver Exit')
         self.client_connector.exit_connector()
         print('[NOW] : Connector Exit')
+
+    def create_sample(self, sample_data, num=10):
+        """
+        sample_data 로 받은 값들을 무작위로 배열하여
+        num 값으로 받은 수만큼 리스트를 만들어서 반환합니다.
+        """
+        pass
 
 
 class FoodServerConnector(threading.Thread):
