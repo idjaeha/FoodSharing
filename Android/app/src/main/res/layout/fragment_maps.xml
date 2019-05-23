@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< HEAD
     android:background="#AAD"
     tools:context="ac.kr.hansung.FoodSharing.MapsFragment">
 
@@ -12,15 +11,6 @@
     android:id="@+id/map_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     />
-=======
-    android:background="#AAD">
-
-    <net.daum.mf.map.api.MapView
-        android:id="@+id/map_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
->>>>>>> develop
 
 </LinearLayout>

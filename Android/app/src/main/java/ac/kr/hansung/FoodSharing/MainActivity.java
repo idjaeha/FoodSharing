@@ -2,10 +2,7 @@ package ac.kr.hansung.FoodSharing;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-<<<<<<< HEAD
 import android.content.pm.Signature;
-=======
->>>>>>> develop
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -15,19 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
-<<<<<<< HEAD
-import android.view.ViewGroup;
-import android.widget.TextView;
-=======
-import android.content.pm.Signature;
 
 import java.security.MessageDigest;
->>>>>>> develop
 
-import net.daum.mf.map.api.MapView;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
 
