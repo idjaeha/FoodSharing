@@ -13,6 +13,9 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.Socket;
 import java.security.MessageDigest;
 
 
@@ -58,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -70,26 +70,59 @@ public class MainActivity extends AppCompatActivity {
         recommendFragment = new RecommendFragment();
         chattingFragment = new ChattingFragment();
 
-        //HashKey값을 얻기 위한 코드 (SHA)
-        //getHashKeySHA();
-
         setFrag(R.id.navigation_home);
+
+        ConnectThread thread = new ConnectThread("192.168.0.36");
+        thread.start();
     }
 
-    private void getHashKeySHA() {
-        try{
-            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md;
-                md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String key = new String(Base64.encode(md.digest(), 0));
-                Log.d("Hash key: ", key);
+    class ConnectThread extends Thread {
+        String hostname;
+        int port;
+        Socket soc = null;
+        DataOutputStream dos;
+        DataInputStream dis;
+
+        public ConnectThread(String addr) {
+            hostname = addr;
+            port = 10000;
+        }
+
+        public void run() {
+            try {
+                soc = new Socket(hostname, port);
+                dos = new DataOutputStream(soc.getOutputStream());
+                dis = new DataInputStream(soc.getInputStream());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("MainActivity", "정상 접속 실패");
+                return;
             }
-        } catch (Exception e){
-            Log.e("name not found", e.toString());
+
+            try {
+                byte[] sendMsgByte = new byte[128];
+                String str = "hello python";
+                String s = String.format("%-128s", str);
+                sendMsgByte = s.getBytes("euc-kr");
+                dos.write(sendMsgByte);
+            } catch (Exception e) {
+
+            }
+            while (true) {
+                try {
+                    byte[] b = new byte[128];
+                    dis.read(b);
+                    String receivedMsg = new String(b);
+                    receivedMsg = receivedMsg.trim();
+
+                    Log.d("MainActivity", "서버에서 받은 메세지 : " + receivedMsg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
+
 
     public void setFrag(int n){    //프래그먼트를 교체하는 작업을 하는 메소드를 만들었습니다
         fm = getSupportFragmentManager();

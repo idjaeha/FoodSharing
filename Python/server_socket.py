@@ -4,7 +4,7 @@ import threading, csv
 import server_db
 from datetime import datetime, timedelta
 
-BUFSIZE = 1024
+BUFSIZE = 128
 HOST = ''
 PORT = 10000
 ADDR = (HOST, PORT)
@@ -273,7 +273,10 @@ class FoodServerReceiver(threading.Thread):
 
     def run(self):
         while self.flag:
-            print('[Now] : Waiting Msg')
-            data = self.client_socket.recv(BUFSIZE)
-            print('[RECV] : ', data.decode())
+            try:
+                print('[Now] : Waiting Msg')
+                data = self.client_socket.recv(BUFSIZE)
+                print('[RECV] : ', data.decode())
+            except:
+                print("[Close] : ", self.client_socket)
 
