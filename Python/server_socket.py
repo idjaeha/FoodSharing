@@ -11,6 +11,9 @@ ADDR = (HOST, PORT)
 
 
 class FoodServer:
+    """
+    소켓과 DB를 관리하고 각종 기능들을 수행하는 클래스
+    """
     list_server_socket = []
     list_client_socket = []
     list_client_receiver = []
@@ -43,41 +46,6 @@ class FoodServer:
         self.client_connector.exit_connector()
         print('[NOW] : Connector Exit')
 
-    def create_sample(self, sample_data, num=10, title=None):
-        """
-        sample_data 로 받은 값들을 무작위로 배열하여
-        num 값으로 받은 수만큼 리스트를 만들어서 반환합니다.
-        title값을 적게되면 리스트의 맨 처음 값으로 title값을 넣습니다.
-        """
-        random_list = []
-        if title is not None:
-            random_list.append(title)
-        length = len(sample_data)
-        for i in range(num):
-            random_list.append(sample_data[randrange(1, length)])
-
-        return random_list
-
-    def create_csv(self, data, filename="output.csv"):
-        """
-        list 형태로 받은 data를 csv 파일 형태로 만들어냅니다.
-        data는 리스트들로 이루어져있으며 리스트의 첫번째 값은 각 행의 제목을 뜻합니다.
-        filename을 인자 값으로 주지 않는다면 output.csv 을 제목으로 사용합니다.
-        """
-        fieldnames = []
-        #제목을 fieldnames에 저장합니다.
-        for t_data in data:
-            fieldnames.append(t_data[0])
-
-        f = open(filename, 'w', encoding='euc-kr', newline='')
-        writer = csv.writer(f)
-        writer.writerow(fieldnames)
-        for idx_i in range(1,len(data[0])):
-            temp = []
-            for idx_j in range(len(data)):
-                temp.append(data[idx_j][idx_i])
-            writer.writerow(temp)
-
     def create_csv_row(self, data, filename="output.csv", file_location="./"):
         """
         list 형태로 받은 data를 csv 파일 형태로 만들어냅니다.
@@ -95,27 +63,13 @@ class FoodServer:
         for idx_i in range(1, len(data)):
             writer.writerow(data[idx_i])
 
-    def create_sample_csv(self, *sample_list):
-        """
-        배열들을 배열에 저장한 값을 인자로 받아 csv 파일을 만듭니다.
-        맨 처음 값을 타이틀 값으로 쓰는
-        :param sample_list:
-        :return:
-        """
-        temp_list = []
-        for data in sample_list:
-            temp_list.append(self.create_sample(data, 10, data[0]))
-        self.create_csv(temp_list)
-
-    def create_search_data(self, user_name=None, num=500):
+    def create_search_data(self, num=500):
         """
         랜덤으로 유저의 검색 기록을 만들어주는 함수
-        :param user_name, num, csv_flag:
+        :param num
         :return:
         """
-        #test_search = [["Search_Category", "Search_Time", "Search_Word"]]
         test_search = []
-
 
         example = \
             [["한식", "비빔밥", "불고기", "된장찌개", "김치찌개", "김치전", "떡갈비"],
@@ -134,14 +88,10 @@ class FoodServer:
 
         for i in range(num):
             temp = []
-            #idx_i = randrange(5)
-            #idx_j = randint(1, 6)
             temp.append(i + 1)
             temp.append(randint(1, 6))
-            #temp.append(example[idx_i][0])
             temp.append(temp_times[i])
             temp.append(randint(1,60))
-            #temp.append(example[idx_i][idx_j])
             test_search.append(temp)
 
         return test_search
@@ -241,10 +191,32 @@ class FoodServer:
             self.create_csv_row(test_rest, "rest_data.csv")
         return test_rest
 
+    def create_person_csv(self, user_num):
+        title = ["Search_Category", "Search_Time", "Search_Word"]
+        result = self.food_server_db.select_human_csv(user_num)
+        result.insert(0, title)
+        self.create_csv_row(result, "person{0}.csv".format(user_num), "./data/person/")
+
+    def add_search_data(self, user_num, food_num):
+        """
+        search 테이블에 값을 추가하는 함수
+        :param user_num:
+        :param food_num:
+        :return:
+        """
+        num = self.food_server_db.get_data_num("search") + 1
+        search_value = [num, user_num, datetime.now(), food_num]
+
+        self.food_server_db.insert_search_data(search_value)
+
     def create_basic_table(self):
         self.food_server_db.create_table()
 
+
 class FoodServerConnector(threading.Thread):
+    """
+    클라이언트와의 연결을 위해 대기하는 커넥터
+    """
     list_client_socket = []
     list_client_receiver = []
     _server_socket = 0
@@ -286,6 +258,9 @@ class FoodServerConnector(threading.Thread):
 
 
 class FoodServerReceiver(threading.Thread):
+    """
+    클라이언트들의 메세지를 받기 위해 대기하는 리시버
+    """
     client_socket = 0
     flag = 1
 

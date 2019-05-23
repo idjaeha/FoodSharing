@@ -36,21 +36,6 @@ class FoodServerDB:
         # Just be sure any changes have been committed or they will be lost.
         self.conn.close()
 
-    def insert_search_data(self, *values):
-        """
-        해당 테이블에 데이터를 넣습니다.
-        :param values:
-        :return:
-        """
-        self.conn = sqlite3.connect('./data/db/FoodSharing.db')
-        self.cur = self.conn.cursor()
-
-        sql = "INSERT INTO search VALUES (?, ?, ?, ?)"
-        self.cur.execute(sql, values)
-
-        self.conn.commit()
-        self.conn.close()
-
     def insert_restaurant_data(self, values):
         """
         해당 테이블에 데이터를 넣습니다.
@@ -61,7 +46,9 @@ class FoodServerDB:
         self.cur = self.conn.cursor()
 
         sql = "INSERT INTO rest VALUES (?, ?, ?, ?, ?)"
-        self.cur.executemany(sql, values)
+        self.cur.execute(sql, values)
+        #많은 데이터를 넣고자 할때 사용
+        #self.cur.executemany(sql, values)
 
         self.conn.commit()
         self.conn.close()
@@ -76,7 +63,9 @@ class FoodServerDB:
         self.cur = self.conn.cursor()
 
         sql = "INSERT INTO food VALUES (?, ?, ?, ?)"
-        self.cur.executemany(sql, values)
+        self.cur.execute(sql, values)
+        #많은 데이터를 넣고자 할때 사용
+        #self.cur.executemany(sql, values)
 
         self.conn.commit()
         self.conn.close()
@@ -93,7 +82,9 @@ class FoodServerDB:
         self.cur = self.conn.cursor()
 
         sql = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ? ,? ,?)"
-        self.cur.executemany(sql, values)
+        self.cur.execute(sql, values)
+        #많은 데이터를 넣고자 할때 사용
+        #self.cur.executemany(sql, values)
 
         self.conn.commit()
         self.conn.close()
@@ -108,20 +99,22 @@ class FoodServerDB:
         self.cur = self.conn.cursor()
 
         sql = "INSERT INTO search VALUES (?, ?, ?, ?)"
-        self.cur.executemany(sql, values)
+        self.cur.execute(sql, values)
+        #많은 데이터를 넣고자 할때 사용
+        #self.cur.executemany(sql, values)
 
         self.conn.commit()
         self.conn.close()
 
-    def select_human_csv(self):
+    def select_human_csv(self, user_num):
         """
         분석 인풋 형식에 맞는 데이터를 뽑아냅니다.
         :return:
         """
         self.conn = sqlite3.connect('./data/db/FoodSharing.db')
         self.cur = self.conn.cursor()
-        sql = "select category, time, food_name from "
-        self.cur.execute(sql)
+        sql = "select f.category, s.time, f.food_name from food f, search s where s.user_num = ? and s.food_num = f.food_num"
+        self.cur.execute(sql, (user_num, ))
         self.conn.commit()
 
         rows = self.cur.fetchall()
@@ -129,6 +122,7 @@ class FoodServerDB:
             print(row)
 
         self.conn.close()
+        return rows
 
     def select_all_data(self, table):
         """
@@ -139,7 +133,7 @@ class FoodServerDB:
         """
         self.conn = sqlite3.connect('./data/db/FoodSharing.db')
         self.cur = self.conn.cursor()
-        sql = "select * from " + table
+        sql = "select * from {0}".format(table)
         self.cur.execute(sql)
         self.conn.commit()
 
@@ -163,4 +157,25 @@ class FoodServerDB:
 
         self.conn.commit()
         self.conn.close()
+
+    def execute_sql(self, sql):
+        self.conn = sqlite3.connect('./data/db/FoodSharing.db')
+        self.cur = self.conn.cursor()
+
+        self.cur.execute(sql)
+
+        self.conn.commit()
+        self.conn.close()
+
+    def get_data_num(self, table):
+        self.conn = sqlite3.connect('./data/db/FoodSharing.db')
+        self.cur = self.conn.cursor()
+
+        sql = "select * from {0}".format(table)
+        self.cur.execute(sql)
+        num = len(self.cur.fetchall())
+
+        self.conn.commit()
+        self.conn.close()
+        return num
 
