@@ -54,5 +54,4 @@ github에서 불러오기
 6. 무사히 합쳐졌다면 git add. -> git commit -m "message" -> git push를 이용하여 저장소에 올린다.
 7. git branch -d name 을 이용하여 자신이 만든 branch를 지운다.
 
-![1_1](./Image/1_1.png)
 
