@@ -3,6 +3,10 @@ from random import *
 import threading, csv
 import server_db
 from datetime import datetime, timedelta
+import glob
+import pandas as pd
+from sklearn import metrics
+from sklearn.model_selection import train_test_split
 
 BUFSIZE = 128
 HOST = ''
@@ -192,10 +196,16 @@ class FoodServer:
         return test_rest
 
     def create_person_csv(self, user_num):
-        title = ["Search_Category", "Search_Time", "Search_Word"]
-        result = self.food_server_db.select_human_csv(user_num)
-        result.insert(0, title)
-        self.create_csv_row(result, "person{0}.csv".format(user_num), "./data/person/")
+        title = ["Search_Category", "Search_Time", "Search_Word", "id"]
+        result = list(self.food_server_db.select_human_csv(user_num))
+        result1 = []
+
+        for data in result:
+            temp = list(data)
+            temp.append(user_num-1)
+            result1.append(temp)
+        result1.insert(0, title)
+        self.create_csv_row(result1, "person{0}.csv".format(user_num - 1), "./data/person/")
 
     def add_search_data(self, user_num, food_num):
         """
@@ -211,6 +221,222 @@ class FoodServer:
 
     def create_basic_table(self):
         self.food_server_db.create_table()
+
+    def food_analysis(self):
+        input_path = "./data/person/"
+        rows_num = 20
+        check_percent = 0.1
+
+        # id 로그인
+        input_id = input("id를 입력 : ")
+        input_id_int = int(input_id)
+
+        # 현재 시간 전부
+        currentTime = datetime.now()
+        # 7일전
+        currentTime7 = currentTime - timedelta(days=7)
+
+        # 현재 시간만
+        ct = currentTime.hour
+
+        allFiles = glob.glob(input_path + "*.csv")
+        print(input_path)
+        people = len(allFiles)
+        allData = pd.DataFrame()
+        list_ = []
+        classification_ = []
+        allClassification_df = []
+
+        # 모든 파일 데이터 통합
+        for file_ in allFiles:
+            df = pd.read_csv(file_, index_col=None, header=0, encoding="euc-kr")
+            Classification_df = df[['Search_Time', 'Search_Word']]
+            list_.append(df)
+            classification_.append(Classification_df)
+
+        # BestSeller 시작
+        allClassification_df = pd.concat(classification_)
+        allData = pd.concat(list_)
+
+        # 7일 이상된 row 제거
+        allData['Search_Time'] = pd.to_datetime(allData['Search_Time'])
+
+        # allData = allData.loc[(allData['Search_Time'] > currentTime7), :]
+
+        # 시간 분류
+        Time = []
+        temp_Menu = allData.Search_Word
+        Menu = temp_Menu.values.tolist()
+        df_list = allClassification_df.values.tolist()
+
+        for item in df_list:
+            for t in range(1):
+                temp_t = str(item[t])
+                temp_Day = temp_t[5:7]
+                temp_Time = int(temp_t[11:13])
+                Time.append(temp_Time)
+
+        # 메뉴와 시간만 받는 데이터생성
+        data = pd.DataFrame({'Time': Time,
+                             'Menu': Menu})
+        # 메뉴
+        menu_list = str(list(data.Menu)).strip('[]').replace("'", "").replace(",", "")
+
+        # 전체 데이터 인코딩
+        onehot_data = pd.get_dummies(data.Menu)
+
+        # 각각의 시간과 날짜 별로 list 생성
+        timeDic = {}
+        timeDic['Morning'] = data.loc[(10 >= data["Time"]) & (data["Time"] > 6), :]
+        timeDic['Lunch'] = data.loc[(10 >= data["Time"]) & (data["Time"] > 6), :]
+        timeDic['Dinner'] = data.loc[(10 >= data["Time"]) & (data["Time"] > 6), :]
+        Midnight1 = data.loc[(24 >= data["Time"]) & (data["Time"] > 20), :]
+        Midnight2 = data.loc[(6 >= data["Time"]) & (data["Time"] >= 0), :]
+        Midnight = Midnight1.append(Midnight2)
+        timeDic['Midnight'] = Midnight1.append(Midnight2)
+
+        def printTimeTop5(ct, time):
+            top_count = 0
+            print(str(ct) + "시 기준 탑5")
+            # one hot encoding
+            time_df = pd.get_dummies(timeDic[time].Menu)
+
+            sum_time_df = pd.DataFrame(time_df.sum(axis=0), columns=["count"])
+            sort_time_df = sum_time_df.sort_values(by="count", ascending=False)
+            top_time_df = sort_time_df[0:5].index.tolist()
+
+            for item in top_time_df:
+                top_count += 1
+                print(str(top_count) + ":" + item)
+            print('----------------------------------------------')
+
+        # 시간별로 다루는 list 종류
+        if ct >= 10 and 6 > ct:
+            printTimeTop5(ct, 'Morning')
+        elif 16 >= ct and ct > 10:
+            printTimeTop5(ct, 'Lunch')
+        elif 20 >= ct and ct > 16:
+            printTimeTop5(ct, 'Dinner')
+        else:
+            printTimeTop5(ct, 'Midnight')
+
+        def addPersonData(top5List, count):
+            personList = []
+            for i in range(count):
+                # 사람0의 데이터 분석
+                person_df = allData.loc[allData["id"] == i]
+                person_search_df = person_df[["Search_Category", "Search_Word"]]
+                person_onehot_search_word_data = pd.get_dummies(person_search_df.Search_Word)
+
+                # 사람0의 탑5 메뉴
+                sum_person_df = pd.DataFrame(person_onehot_search_word_data.sum(axis=0), columns=["count"])
+                sort_sum_person_df = sum_person_df.sort_values(by="count", ascending=False)
+                top5_person_df = sort_sum_person_df[0:5].index.tolist()
+
+                person_data = person_onehot_search_word_data
+                person_label = person_df[["Search_Category"]]
+
+                # 학습 전용 데이터와 테스트 전용 데이터로 나누기
+                person_data_train, person_data_test, person_label_train, person_label_test = train_test_split(
+                    person_data,
+                    person_label,
+                    test_size=rows_num)
+                personList.append(person_label_test)
+                top5List.append(top5_person_df)
+
+            return personList
+
+        personTop5Datas = []
+        personDatas = addPersonData(personTop5Datas, people)
+
+        # 학습, 예측
+
+        # 사람별 취향 일치율
+        ac_scores = []
+        for i in range(len(personDatas)):
+            scoreList = []
+            for j in range((len(personDatas) - 1) - i):
+                scoreList.append(metrics.accuracy_score(personDatas[i], personDatas[j + 1 + i]))
+            if len(scoreList) != 0:
+                ac_scores.append(scoreList)
+
+        # 취향 일치율 출력
+        # for i in range(len(ac_scores)):
+        #    for j in range(len(ac_scores[i])):
+        #        newStr = str(i) + str(j + 1 + i) + '정답률 : '
+        #        print(newStr, ac_scores[i][j])
+
+        # 취향에 따른 추천
+        def recommend(id):
+            canFind = False
+            for i in range(id):
+                if float(ac_scores[i][id - 1 - i]) > check_percent:
+                    canFind = True
+                    top_count = 0
+                    print(str(id) + "님과 비슷한 취향을 가진 " + str(i) + "님의 메뉴 탑5")
+                    for item in personTop5Datas[i]:
+                        top_count += 1
+                        print(str(top_count) + ":" + item)
+
+            if id < len(ac_scores):
+                for i in range(len(ac_scores[id])):
+                    if float(ac_scores[id][i]) > check_percent:
+                        canFind = True
+                        top_count = 0
+                        top5Index = id + i + 1
+                        print(str(id) + "님과 비슷한 취향을 가진 " + str(top5Index) + "님의 메뉴 탑5")
+                        for item in personTop5Datas[top5Index]:
+                            top_count += 1
+                            print(str(top_count) + ":" + item)
+
+            if canFind == False:
+                print(str(id) + "님과 비슷한 취향의 회원이 존재하지 않습니다.")
+
+        recommend(input_id_int)
+
+        # 사람별 카테고리 탑5 출력
+        # 카테고리 입력 및 검색어 받음
+        def personal_taste(id):
+            # 지역 변수
+            top_count = 0
+            person_df = allData.loc[allData["id"] == id]
+
+            # 한명의 탑5 카테고리
+            person_onehot_category_data = pd.get_dummies(person_df.Search_Category)
+            sum_person_df = pd.DataFrame(person_onehot_category_data.sum(axis=0), columns=["count"])
+            # 카테고리 기준으로 오름차순 정리
+            sort_sum_person_df = sum_person_df.sort_values(by="count", ascending=False)
+            top5_person_df = sort_sum_person_df[0:5].index.tolist()
+            print("person" + str(id) + "님의 카테고리 탑5")
+
+            for item in top5_person_df:
+                top_count += 1
+                print(str(top_count) + ":" + item)
+
+            # 노가다 용 코드
+            # searchCategory = '양식'
+            # searchWord = '피자'
+
+            print("---------------------------")
+            searchCategory = input('카테고리 : ')
+            searchWord = input('검색어 : ')
+            searchTime = currentTime
+
+            df = pd.DataFrame(
+                {"id": [id], "Search_Time": [searchTime], "Search_Category": [searchCategory],
+                 "Search_Word": [searchWord]})
+            result = person_df.append(df)
+            result.to_csv(input_path + "person" + str(id) + ".csv", encoding="euc-kr",
+                          index=False)
+
+        print("---------------------------")
+        # 노가다용
+        # for item in range(6):
+        # personal_taste(1)
+        # id input
+        personal_taste(input_id_int)
+
+        print("---------------------------")
 
 
 class FoodServerConnector(threading.Thread):

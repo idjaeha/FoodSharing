@@ -55,4 +55,3 @@ github에서 불러오기
 7. git branch -d name 을 이용하여 자신이 만든 branch를 지운다.
 
 
-

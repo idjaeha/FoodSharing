@@ -3,12 +3,16 @@ import server_socket
 
 def run():
     food_server = server_socket.FoodServer()
+    while 1:
+        food_server.food_analysis()
+    """
     food_server.create_connector()
 
     while 1:
         send_msg = input("Enter the msg : ")
         for i in food_server.list_client_socket:
             i.send(send_msg.encode("euc-kr"))
+            """
 
 
 
