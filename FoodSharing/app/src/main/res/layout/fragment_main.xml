@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/title_big"
+                android:layout_width="240dp"
+                android:layout_height="80dp"
+                android:layout_margin="40dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/title_big"/>
+
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:columnCount="3">
+
+                <ImageView
+                    android:id="@+id/image_category1"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/category_1"/>
+                <ImageView
+                    android:id="@+id/image_category2"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/category_2"/>
+                <ImageView
+                    android:id="@+id/image_category3"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/category_3"/>
+                <ImageView
+                    android:id="@+id/image_category4"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/category_4"/>
+                <ImageView
+                    android:id="@+id/image_category5"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/category_5"/>
+                <ImageView
+                    android:id="@+id/image_category6"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_margin="20dp" />
+
+            </GridLayout>
+
+            <ImageView
+                android:id="@+id/title_recommend"
+                android:layout_width="240dp"
+                android:layout_height="80dp"
+                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/title_recommend"/>
+
+            <ImageView
+                android:id="@+id/image_recommend1"
+                android:layout_width="240dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:src="@drawable/recommend_1"/>
+
+            <ImageView
+                android:id="@+id/image_recommend2"
+                android:layout_width="240dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:src="@drawable/recommend_2"/>
+
+            <ImageView
+                android:id="@+id/image_recommend3"
+                android:layout_width="240dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:src="@drawable/recommend_3"/>
+
+            <ImageView
+                android:id="@+id/image_recommend4"
+                android:layout_width="240dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:src="@drawable/recommend_4"/>
+
+            <ImageView
+                android:id="@+id/image_recommend5"
+                android:layout_width="240dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:src="@drawable/recommend_5"/>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>
