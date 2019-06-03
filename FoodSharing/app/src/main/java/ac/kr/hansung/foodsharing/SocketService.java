@@ -2,6 +2,7 @@ package ac.kr.hansung.foodsharing;
 
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -10,8 +11,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
+import static ac.kr.hansung.foodsharing.InitActivity.userInfo;
+
 public class SocketService extends Service {
-    private final static String addr = "192.168.0.36";
+    private final static String addr = "192.168.0.7";
     private final static int port = 10000;
     ConnectThread socket;
 
@@ -35,6 +38,7 @@ public class SocketService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("MainActivity", "onStartCommand 실행 : " + intent.getStringExtra("command"));
         if (intent == null) {
             return Service.START_STICKY;
         } else {
@@ -47,8 +51,14 @@ public class SocketService extends Service {
     public void processCommand(Intent intent) {
         String command = intent.getStringExtra("command");
 
-        if (command == "1") {
-            socket.sendMsg("hello world!!!");
+        //null 값이면
+        if (command == null) {
+            return;
+        }
+
+        if (command.equals("1") == true) {
+            String msg = "1//" + intent.getStringExtra("id") + "//" + intent.getStringExtra("pwd") + "//";
+            socket.sendMsg(msg);
         }
     }
 
@@ -73,8 +83,6 @@ public class SocketService extends Service {
                 interrupt();
                 return;
             }
-            sendMsg("hello python!!!");
-            sendMsg("hello python!!!");
             socketAlive = true;
             while (true) {
                 try {
@@ -82,26 +90,62 @@ public class SocketService extends Service {
                     dis.read(b);
                     String receivedMsg = new String(b);
                     receivedMsg = receivedMsg.trim();
+                    processRecvMsg(receivedMsg);
 
                     Log.d("MainActivity", "서버에서 받은 메세지 : " + receivedMsg);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d("MainActivity", "서버와 연결 종료");
+                    break;
                 }
             }
         }
 
-        public void sendMsg(String msg) {
-            Log.d("MainActivity", msg.trim() + "메세지 전송");
-            try {
-                dos = new DataOutputStream(soc.getOutputStream());
-                byte[] sendMsgByte = new byte[128];
-                String s = String.format("%-128s", msg.trim());
-                sendMsgByte = s.getBytes("euc-kr");
-                dos.write(sendMsgByte);
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.d("MainActivity", msg.trim() + "메세지 전송 실패");
+        public void processRecvMsg(String msg) {
+            msg = msg.trim();
+            String[] msgArr = msg.split("//");
+            String cmd = msgArr[0];
+            if (cmd.equals("2")) {
+                if (msgArr[1].equals("1")) {
+                    userInfo.setUserNum(Integer.parseInt(msgArr[1]));
+                    userInfo.setId(msgArr[2]);
+                    userInfo.setPwd(msgArr[3]);
+
+                    Intent nextIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(nextIntent);
+                }
             }
+
+        }
+
+        public void sendMsg(String msg) {
+            Log.d("MainActivity", "메세지 전송 : " + msg.trim());
+            class SendMsg implements Runnable {
+                String msg;
+                public SendMsg(String msg) {
+                    this.msg = msg;
+                }
+
+                public void run() {
+                    try {
+                        if (soc != null) {
+                            //dos = new DataOutputStream(soc.getOutputStream());
+                            byte[] sendMsgByte = new byte[128];
+                            String s = String.format("%-128s", msg.trim());
+                            sendMsgByte = s.getBytes("euc-kr");
+                            dos.write(sendMsgByte);
+                        } else {
+                            Log.d("MainActivity", "소켓이 null 값입니다.");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.d("MainActivity", msg.trim() + "메세지 전송 실패");
+                    }
+                }
+            }
+            Thread sm = new Thread(new SendMsg(msg));
+            sm.start();
         }
 
         public boolean isSocketAlive() {

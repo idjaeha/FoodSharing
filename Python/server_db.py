@@ -82,9 +82,9 @@ class FoodServerDB:
         self.cur = self.conn.cursor()
 
         sql = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ? ,? ,?)"
-        self.cur.execute(sql, values)
+        #self.cur.execute(sql, values)
         #많은 데이터를 넣고자 할때 사용
-        #self.cur.executemany(sql, values)
+        self.cur.executemany(sql, values)
 
         self.conn.commit()
         self.conn.close()
@@ -178,4 +178,16 @@ class FoodServerDB:
         self.conn.commit()
         self.conn.close()
         return num
+
+    def get_user_using_info(self, id, pwd):
+        self.conn = sqlite3.connect('./data/db/FoodSharing.db')
+        self.cur = self.conn.cursor()
+
+        sql = "select * from user where id = {0} and pwd = {1}".format(id, pwd)
+        self.cur.execute(sql)
+        rows = self.cur.fetchall()
+
+        self.conn.commit()
+        self.conn.close()
+        return rows
 

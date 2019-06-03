@@ -1,5 +1,6 @@
 from socket import *
 from random import *
+import copy
 import threading, csv
 import server_db
 from datetime import datetime, timedelta
@@ -148,8 +149,8 @@ class FoodServer:
         :return:
         """
         test_user = []
-        user_name = ["철수", "영희", "재하", "예은", "지호", "민호"]
-        user_num = 1
+        user_name = ["0", "1", "2", "3", "4", "5"]
+        user_num = 0
 
         for i in range(6):
             temp = []
@@ -222,10 +223,10 @@ class FoodServer:
     def create_basic_table(self):
         self.food_server_db.create_table()
 
-    def food_analysis(self):
+    def food_analysis(self, top5_list, user_ac_list):
         input_path = "./data/person/"
         rows_num = 20
-        check_percent = 0.1
+        check_percent = 0.20
 
         # id 로그인
         input_id = input("id를 입력 : ")
@@ -310,15 +311,20 @@ class FoodServer:
                 print(str(top_count) + ":" + item)
             print('----------------------------------------------')
 
+            return list(top_time_df)
+
         # 시간별로 다루는 list 종류
         if ct >= 10 and 6 > ct:
-            printTimeTop5(ct, 'Morning')
+            temp = printTimeTop5(ct, 'Morning')
         elif 16 >= ct and ct > 10:
-            printTimeTop5(ct, 'Lunch')
+            temp = printTimeTop5(ct, 'Lunch')
         elif 20 >= ct and ct > 16:
-            printTimeTop5(ct, 'Dinner')
+            temp = printTimeTop5(ct, 'Dinner')
         else:
-            printTimeTop5(ct, 'Midnight')
+            temp = printTimeTop5(ct, 'Midnight')
+
+        for i in temp:
+            top5_list.append(i)
 
         def addPersonData(top5List, count):
             personList = []
@@ -369,7 +375,9 @@ class FoodServer:
         # 취향에 따른 추천
         def recommend(id):
             canFind = False
+            print(ac_scores)
             for i in range(id):
+                print(i, " > ", ac_scores[i][id - 1 - i])
                 if float(ac_scores[i][id - 1 - i]) > check_percent:
                     canFind = True
                     top_count = 0
@@ -380,6 +388,7 @@ class FoodServer:
 
             if id < len(ac_scores):
                 for i in range(len(ac_scores[id])):
+                    print(i, " : ", ac_scores[id][i])
                     if float(ac_scores[id][i]) > check_percent:
                         canFind = True
                         top_count = 0
@@ -393,6 +402,7 @@ class FoodServer:
                 print(str(id) + "님과 비슷한 취향의 회원이 존재하지 않습니다.")
 
         recommend(input_id_int)
+        """
 
         # 사람별 카테고리 탑5 출력
         # 카테고리 입력 및 검색어 받음
@@ -416,9 +426,10 @@ class FoodServer:
             # 노가다 용 코드
             # searchCategory = '양식'
             # searchWord = '피자'
+            
 
             print("---------------------------")
-            searchCategory = input('카테고리 : ')
+            #searchCategory = input('카테고리 : ')
             searchWord = input('검색어 : ')
             searchTime = currentTime
 
@@ -428,6 +439,7 @@ class FoodServer:
             result = person_df.append(df)
             result.to_csv(input_path + "person" + str(id) + ".csv", encoding="euc-kr",
                           index=False)
+              
 
         print("---------------------------")
         # 노가다용
@@ -436,7 +448,7 @@ class FoodServer:
         # id input
         personal_taste(input_id_int)
 
-        print("---------------------------")
+        print("---------------------------")"""
 
 
 class FoodServerConnector(threading.Thread):
@@ -477,7 +489,7 @@ class FoodServerConnector(threading.Thread):
             print('[Now] : Accept')
             print('--client information--')
             print(_client_socket)
-            socket_receiver = FoodServerReceiver(_client_socket)
+            socket_receiver = FoodServerReceiver(_client_socket, self.list_client_socket)
             self.list_client_receiver.append(socket_receiver)
             socket_receiver.start()
             print('[Now] : Receiver Start')
@@ -489,10 +501,14 @@ class FoodServerReceiver(threading.Thread):
     """
     client_socket = 0
     flag = 1
+    list_client_socket = []
+    food_server_db = 0
 
-    def __init__(self, client_socket):
+    def __init__(self, client_socket, list_client_socket):
         threading.Thread.__init__(self)
         self.client_socket = client_socket
+        self.list_client_socket = list_client_socket
+        self.food_server_db = server_db.FoodServerDB()
 
     def exit_receiver(self):
         self.flag = 0
@@ -502,7 +518,33 @@ class FoodServerReceiver(threading.Thread):
             try:
                 print('[Now] : Waiting Msg')
                 data = self.client_socket.recv(BUFSIZE)
-                print('[RECV] : ', data.decode())
+                self.process_recv_msg(data)
+                print('[Recv] : ', data.decode("euc-kr"))
             except:
                 print("[Close] : ", self.client_socket)
+                self.list_client_socket.remove(self.client_socket)
+                break
+
+    def process_recv_msg(self, msg):
+        msg = msg.decode("euc-kr")
+        msg_list = msg.split("//")
+        cmd = msg_list[0]
+        print("[Cmd] : " + cmd)
+        if cmd == "1":
+            id = msg_list[1]
+            pwd = msg_list[2]
+            rows = self.food_server_db.get_user_using_info(id, pwd)
+            #로그인 성공
+            if len(rows) == 1:
+                msg = "2//1//" + str(rows[0][0]) + "//" + rows[0][1] + "//" + rows[0][2] + "//"
+            else:
+                msg = "2//0//"
+            self.send_msg(msg)
+        else:
+            self.send_msg("실패")
+
+    def send_msg(self, msg):
+        send_msg = msg
+        self.client_socket.send(send_msg.encode("euc-kr"))
+        print("[SEND] : " + send_msg)
 

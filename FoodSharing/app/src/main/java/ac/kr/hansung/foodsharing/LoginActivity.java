@@ -3,26 +3,57 @@ package ac.kr.hansung.foodsharing;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import static ac.kr.hansung.foodsharing.InitActivity.userInfo;
+
 
 public class LoginActivity extends AppCompatActivity {
+    Button loginButton;
+    EditText editTextId;
+    EditText editTextPwd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        editTextId = findViewById(R.id.editText_id);
+        editTextPwd = findViewById(R.id.editText_pwd);
+
+        loginButton = findViewById(R.id.button_login);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginApp();
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        LoginApp();
+        userInfo = new UserInfo(0, "","");
     }
 
 
     private void LoginApp() {
+        CheckID();
+        editTextId.setText("");
+        editTextPwd.setText("");
 
-        //Intent intent = new Intent(this, LoginActivity.class);
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivityForResult(intent, 101);
+
+    }
+
+    private  void CheckID() {
+        Intent socketIntent = new Intent(this, SocketService.class);
+        socketIntent.putExtra("command", "1");
+        socketIntent.putExtra("id", editTextId.getText().toString());
+        socketIntent.putExtra("pwd", editTextPwd.getText().toString());
+        startService(socketIntent);
     }
 }

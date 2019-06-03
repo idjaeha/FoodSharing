@@ -44,6 +44,10 @@ public class StoreListActivity extends AppCompatActivity {
             }
         });
 
+        Intent myIntent = new Intent(this, SocketService.class);
+        myIntent.putExtra("command","1");
+        startService(myIntent);
+
     }
 
     @Override

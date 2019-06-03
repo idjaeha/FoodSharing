@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">915396354955-8bqmjo6cfmkhp77dmjmef9dkb4o8glp4.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://foodsharing-289a8.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">915396354955</string>
+    <string name="google_api_key" translatable="false">AIzaSyAlwE1FFiyJbjeIroEJxY2BVcGZXtPpOBo</string>
+    <string name="google_app_id" translatable="false">1:915396354955:android:734304daf8e89a0c</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAlwE1FFiyJbjeIroEJxY2BVcGZXtPpOBo</string>
+    <string name="google_storage_bucket" translatable="false">foodsharing-289a8.appspot.com</string>
+    <string name="project_id" translatable="false">foodsharing-289a8</string>
+</resources>

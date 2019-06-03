@@ -6,10 +6,14 @@ import android.os.Bundle;
 
 
 public class InitActivity extends AppCompatActivity {
+    public static UserInfo userInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_init);
+
+        userInfo = new UserInfo(0, "","");
     }
 
     @Override
@@ -21,7 +25,6 @@ public class InitActivity extends AppCompatActivity {
 
     private void initApp() {
         Intent socketIntent = new Intent(this, SocketService.class);
-        socketIntent.putExtra("command","1");
         startService(socketIntent);
 
         //연결이 되면 실행됩니다.
