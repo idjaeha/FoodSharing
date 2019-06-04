@@ -364,11 +364,12 @@ class FoodServer:
         user_ac_list.append(personTop5Datas[max_idx])
         #print(ac_scores)
 
-    def update_user_top5(self, user_num):
+    def update_user_top5(self, user_num, flag=True):
         self.user_top5_list.clear()
         self.top5_list.clear()
         self.food_analysis(int(user_num), self.top5_list, self.user_top5_list)
-        self.food_server_db.update_user_top5(user_num, self.user_top5_list[0])
+        if flag:
+            self.food_server_db.update_user_top5(user_num, self.user_top5_list[0])
 
 
 class FoodServerConnector(threading.Thread):
@@ -460,14 +461,20 @@ class FoodServerReceiver(threading.Thread):
             if len(rows) == 1:
                 user_num = str(rows[0][0])
                 self.food_server.update_user_top5(user_num)
+                print(self.food_server.top5_list)
                 msg = "2//1//" + user_num + "//" + "//".join(rows[0][2:]) + "//"
             else:
                 msg = "2//0//"
             self.send_msg(msg)
         elif cmd == "3":
-            # 메인 액티비티 진입
+            # top5 리스트 응답
+            self.food_server.update_user_top5(0, False)
             top5_msg = "4//" + "//".join(self.food_server.top5_list[0]) + "//"
             self.send_msg(top5_msg)
+        elif cmd == "5":
+            # 식당 자료 요청
+            msg = "6//0//1//1//재하네 고기집//한식//1//2"
+            self.send_msg(msg)
 
         else:
             self.send_msg("실패")

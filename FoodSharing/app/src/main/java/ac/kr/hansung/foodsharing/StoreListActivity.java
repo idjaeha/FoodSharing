@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,6 +14,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import static ac.kr.hansung.foodsharing.InitActivity.foodInfo;
 
 public class StoreListActivity extends AppCompatActivity {
     ListView listView;
@@ -40,13 +43,9 @@ public class StoreListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 StoreItem item = (StoreItem) adapter.getItem(position);
-                Toast.makeText(getApplicationContext(), "선택 : " + item.getStoreName(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "선택 : " + item.getRestId(), Toast.LENGTH_LONG).show();
             }
         });
-
-        Intent myIntent = new Intent(this, SocketService.class);
-        myIntent.putExtra("command","1");
-        startService(myIntent);
 
     }
 
@@ -55,53 +54,24 @@ public class StoreListActivity extends AppCompatActivity {
         super.onStart();
 
         Intent intent = getIntent();
-        int flag = intent.getIntExtra("category", -1);
-        if (flag == 0) {
-            adapter.addItem(new StoreItem("no.1", "hello", R.drawable.category_1));
-            adapter.addItem(new StoreItem("no.2", "bye", R.drawable.category_2));
-        } else if (flag == 1) {
-            adapter.addItem(new StoreItem("no.1", "hello", R.drawable.category_3));
-            adapter.addItem(new StoreItem("no.2", "bye", R.drawable.category_4));
-        } else {
-            adapter.addItem(new StoreItem("no.1", "hello", R.drawable.category_1));
-            adapter.addItem(new StoreItem("no.2", "bye", R.drawable.category_5));
+        /*
+        Intent socketIntent = new Intent(this, SocketService.class);
+
+        int flag = intent.getIntExtra("food_num", -1);
+        if (flag >= 0  && flag < 5) {
+            socketIntent.putExtra("command", "5");
+            socketIntent.putExtra("flag", "0");
+            socketIntent.putExtra("category", foodInfo.getCategoryList()[flag]);
+
+        } else if (flag >= 10 && flag < 40) {
+            socketIntent.putExtra("command", "5");
+            socketIntent.putExtra("flag", "1");
+            socketIntent.putExtra("food_name", foodInfo.getFoodList()[flag - 10]);
         }
+        */
+        adapter.addItem(new StoreItem(intent.getStringExtra("rest_name1"), intent.getStringExtra("category_name1"), 100));
+
     }
+
 }
 
-class StoreListAdapterInAct extends BaseAdapter {
-    private ArrayList<StoreItem> items = new ArrayList<>();
-    private Context context;
-
-    @Override
-    public int getCount() {
-        return items.size();
-    }
-
-    public void addItem(StoreItem item) {
-        items.add(item);
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return items.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if(context == null) {
-            context = parent.getContext();
-        }
-        StoreItemView view = new StoreItemView(context.getApplicationContext());
-        StoreItem item = items.get(position);
-        view.setName(item.getStoreName());
-        view.setExp(item.getStoreExp());
-        view.setIcon(item.getResId());
-        return view;
-    }
-}

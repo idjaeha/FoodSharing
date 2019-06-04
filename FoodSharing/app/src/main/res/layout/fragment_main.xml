@@ -17,8 +17,7 @@
                 android:id="@+id/title_big"
                 android:layout_width="240dp"
                 android:layout_height="80dp"
-                android:layout_margin="40dp"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:src="@drawable/title_big"/>
 
             <GridLayout
@@ -73,45 +72,80 @@
                 android:layout_gravity="center"
                 android:src="@drawable/title_recommend"/>
 
-            <ImageView
-                android:id="@+id/image_recommend1"
+            <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
+                android:background="#009688"
                 android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:src="@drawable/recommend_1"/>
+                android:layout_marginBottom="10dp">
+                <ImageView
+                    android:id="@+id/image_recommend1"
+                    android:layout_width="290dp"
+                    android:layout_height="190dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/recommend_1"/>
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/image_recommend2"
+            <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
+                android:background="#009688"
                 android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:src="@drawable/recommend_2"/>
+                android:layout_marginBottom="10dp">
+                <ImageView
+                    android:id="@+id/image_recommend2"
+                    android:layout_width="290dp"
+                    android:layout_height="190dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/recommend_2"/>
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/image_recommend3"
+            <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
+                android:background="#009688"
                 android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:src="@drawable/recommend_3"/>
+                android:layout_marginBottom="10dp">
+                <ImageView
+                    android:id="@+id/image_recommend3"
+                    android:layout_width="290dp"
+                    android:layout_height="190dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/recommend_3"/>
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/image_recommend4"
+            <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
+                android:background="#009688"
                 android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:src="@drawable/recommend_4"/>
+                android:layout_marginBottom="10dp">
+                <ImageView
+                    android:id="@+id/image_recommend4"
+                    android:layout_width="290dp"
+                    android:layout_height="190dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/recommend_4"/>
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/image_recommend5"
+            <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
+                android:background="#009688"
                 android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:src="@drawable/recommend_5"/>
+                android:layout_marginBottom="10dp">
+                <ImageView
+                    android:id="@+id/image_recommend5"
+                    android:layout_width="290dp"
+                    android:layout_height="190dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/recommend_5"/>
+            </LinearLayout>
 
 
         </LinearLayout>

@@ -4,11 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".InfoFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/title_info" />
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/editText_user_x"
+            android:layout_width="135dp"
+            android:layout_height="64dp"
+            android:inputType="number"
+            android:hint="x 좌표"/>
+        <EditText
+            android:id="@+id/editText_user_y"
+            android:layout_width="135dp"
+            android:layout_height="64dp"
+            android:inputType="number"
+            android:hint="y 좌표"/>
+        <Button
+            android:id="@+id/button_user_xy"
+            android:layout_width="135dp"
+            android:layout_height="64dp"
+            android:text="변경"/>
+    </LinearLayout>
 
 </FrameLayout>

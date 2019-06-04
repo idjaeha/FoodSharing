@@ -3,14 +3,14 @@ package ac.kr.hansung.foodsharing;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class StoreItemView extends LinearLayout {
     TextView storeName;
-    TextView storeExp;
-    ImageView storeIcon;
+    TextView storeCategory;
 
     public StoreItemView(Context context) {
         super(context);
@@ -27,20 +27,15 @@ public class StoreItemView extends LinearLayout {
         inflater.inflate(R.layout.item_store_list, this, true);
 
         storeName = (TextView) findViewById(R.id.textView_store_name);
-        storeExp = (TextView) findViewById(R.id.textView_store_exp);
-        storeIcon = (ImageView) findViewById(R.id.imageView_store_icon);
+        storeCategory = (TextView) findViewById(R.id.textView_store_category);
     }
 
     public void setName(String name) {
         storeName.setText(name);
     }
 
-    public void setExp(String exp) {
-        storeExp.setText(exp);
-    }
-
-    public void setIcon(int resId) {
-        storeIcon.setImageResource(resId);
+    public void setStoreCategory(String storeCategory) {
+        this.storeCategory.setText(storeCategory);
     }
 }
 

@@ -3,18 +3,18 @@ package ac.kr.hansung.foodsharing;
 public class StoreItem {
 
     String storeName;
-    String storeExp;
-    int resId;
+    String storeCategory;
+    int restId;
 
-    public StoreItem(String name, String exp) {
+    public StoreItem(String name) {
         storeName = name;
-        storeExp = exp;
+        restId = -1;
     }
 
-    public StoreItem(String name, String exp, int resId) {
+    public StoreItem(String name, String categoryName, int restId) {
         storeName = name;
-        storeExp = exp;
-        this.resId = resId;
+        this.storeCategory = categoryName;
+        this.restId = restId;
     }
 
     public String getStoreName() {
@@ -25,19 +25,19 @@ public class StoreItem {
         this.storeName = storeName;
     }
 
-    public String getStoreExp() {
-        return storeExp;
+    public String getStoreCategory() {
+        return storeCategory;
     }
 
-    public void setStoreExp(String storeExp) {
-        this.storeExp = storeExp;
+    public void setStoreCategory(String categoryName) {
+        this.storeCategory = categoryName;
     }
 
-    public int getResId() {
-        return resId;
+    public int getRestId() {
+        return restId;
     }
 
-    public void setResId(int resId) {
-        this.resId = resId;
+    public void setRestId(int restId) {
+        this.restId = restId;
     }
 }

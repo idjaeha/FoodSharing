@@ -8,15 +8,18 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;
 
 public class SocketService extends Service {
-    private final static String addr = "192.168.0.36";
+    private final static String addr = "192.168.0.7";
     private final static int port = 10000;
     ConnectThread socket;
+    static public SocketService mySocketService;
 
     public SocketService() {
+        mySocketService = this;
     }
 
     @Override
@@ -36,7 +39,7 @@ public class SocketService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("MainActivity", "onStartCommand 실행 : " + intent.getStringExtra("command"));
+        Log.d("SocketService", "onStartCommand 실행 : " + intent.getStringExtra("command"));
         if (intent == null) {
             return Service.START_STICKY;
         } else {
@@ -60,6 +63,14 @@ public class SocketService extends Service {
         } else if (command.equals("3") == true) {
             String msg = "3//";
             socket.sendMsg(msg);
+        } else if (command.equals("5") == true) {
+            if (intent.getStringExtra("flag").equals("0")) {
+                String msg = "5//" + intent.getStringExtra("category") + "//";
+                socket.sendMsg(msg);
+            } else if (intent.getStringExtra("flag").equals("1")) {
+                return;
+            }
+
         }
     }
 
@@ -80,7 +91,7 @@ public class SocketService extends Service {
                 dis = new DataInputStream(soc.getInputStream());
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.d("MainActivity", "정상 접속 실패");
+                Log.d("SocketService", "정상 접속 실패");
                 interrupt();
                 return;
             }
@@ -93,10 +104,10 @@ public class SocketService extends Service {
                     receivedMsg = receivedMsg.trim();
                     processRecvMsg(receivedMsg);
 
-                    Log.d("MainActivity", "서버에서 받은 메세지 : " + receivedMsg);
+                    Log.d("SocketService", "서버에서 받은 메세지 : " + receivedMsg);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.d("MainActivity", "서버와 연결 종료");
+                    Log.d("SocketService", "서버와 연결 종료");
                     break;
                 }
             }
@@ -107,6 +118,7 @@ public class SocketService extends Service {
             String[] msgArr = msg.split("//");
             String cmd = msgArr[0];
             if (cmd.equals("2")) {
+                //로그인 응답
                 if (msgArr[1].equals("1")) {
                     mobileInfo.setUserNum(Integer.parseInt(msgArr[1]));
                     mobileInfo.setId(msgArr[2]);
@@ -116,16 +128,36 @@ public class SocketService extends Service {
                     nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(nextIntent);
                 }
-            }
-            else if (cmd.equals("4")) {
+            } else if (cmd.equals("4")) {
+                //top5 응답
                 String[] temp = {msgArr[1], msgArr[2], msgArr[3], msgArr[4], msgArr[5]};
                 mobileInfo.setTop5Food(temp);
+            } else if (cmd.equals("6")) {
+                //가게 목록 응답
+                String flag = msgArr[1];
+                int num = Integer.parseInt(msgArr[2]);
+                Intent nextIntent = new Intent(getApplicationContext(), StoreListActivity.class);
+                nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (flag.equals("0")) {
+                    for (int i = 0; i < num; i++) {
+                        int restNum = Integer.parseInt(msgArr[3 + 5 * i]);
+                        String restName = msgArr[4 + 5 * i];
+                        String categoryName = msgArr[5 + 5 * i];
+                        nextIntent.putExtra("rest_num" + "1", restNum);
+                        nextIntent.putExtra("rest_name" + "1", restName);
+                        nextIntent.putExtra("category_name" + "1", categoryName);
+                    }
+                    startActivity(nextIntent);
+
+                } else if (flag.equals("1")) {
+
+                }
             }
 
         }
 
         public void sendMsg(String msg) {
-            Log.d("MainActivity", "메세지 전송 : " + msg.trim());
+            Log.d("SocketService", "메세지 전송 : " + msg.trim());
             class SendMsg implements Runnable {
                 String msg;
                 public SendMsg(String msg) {
@@ -141,11 +173,11 @@ public class SocketService extends Service {
                             sendMsgByte = s.getBytes("euc-kr");
                             dos.write(sendMsgByte);
                         } else {
-                            Log.d("MainActivity", "소켓이 null 값입니다.");
+                            Log.d("SocketService", "소켓이 null 값입니다.");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.d("MainActivity", msg.trim() + "메세지 전송 실패");
+                        Log.d("SocketService", msg.trim() + "메세지 전송 실패");
                     }
                 }
             }

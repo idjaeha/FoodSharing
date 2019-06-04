@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 public class InitActivity extends AppCompatActivity {
     public static MobileInfo mobileInfo;
+    public static FoodInfo foodInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,6 +15,7 @@ public class InitActivity extends AppCompatActivity {
         setContentView(R.layout.activity_init);
 
         mobileInfo = new MobileInfo(0, "","");
+        foodInfo = new FoodInfo();
     }
 
     @Override
