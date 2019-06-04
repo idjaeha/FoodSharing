@@ -75,37 +75,42 @@
 
             <ImageView
                 android:id="@+id/image_recommend1"
-                android:layout_width="240dp"
-                android:layout_height="160dp"
+                android:layout_width="300dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/recommend_1"/>
 
             <ImageView
                 android:id="@+id/image_recommend2"
-                android:layout_width="240dp"
-                android:layout_height="160dp"
+                android:layout_width="300dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/recommend_2"/>
 
             <ImageView
                 android:id="@+id/image_recommend3"
-                android:layout_width="240dp"
-                android:layout_height="160dp"
+                android:layout_width="300dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/recommend_3"/>
 
             <ImageView
                 android:id="@+id/image_recommend4"
-                android:layout_width="240dp"
-                android:layout_height="160dp"
+                android:layout_width="300dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/recommend_4"/>
 
             <ImageView
                 android:id="@+id/image_recommend5"
-                android:layout_width="240dp"
-                android:layout_height="160dp"
+                android:layout_width="300dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/recommend_5"/>
 
 

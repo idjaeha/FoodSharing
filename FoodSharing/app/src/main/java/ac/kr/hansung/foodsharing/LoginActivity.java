@@ -3,13 +3,11 @@ package ac.kr.hansung.foodsharing;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import static ac.kr.hansung.foodsharing.InitActivity.userInfo;
+import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -32,12 +30,15 @@ public class LoginActivity extends AppCompatActivity {
                 LoginApp();
             }
         });
+
+        Intent socketIntent = new Intent(this, SocketService.class);
+        socketIntent.putExtra("command", "3");
+        startService(socketIntent);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        userInfo = new UserInfo(0, "","");
     }
 
 
@@ -45,8 +46,6 @@ public class LoginActivity extends AppCompatActivity {
         CheckID();
         editTextId.setText("");
         editTextPwd.setText("");
-
-
     }
 
     private  void CheckID() {

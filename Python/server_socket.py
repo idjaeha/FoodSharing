@@ -1,6 +1,7 @@
+#-*- coding: euc-kr -*-
+
 from socket import *
 from random import *
-import copy
 import threading, csv
 import server_db
 from datetime import datetime, timedelta
@@ -17,33 +18,35 @@ ADDR = (HOST, PORT)
 
 class FoodServer:
     """
-    ì†Œì¼“ê³¼ DBë¥¼ ê´€ë¦¬í•˜ê³  ê°ì¢… ê¸°ëŠ¥ë“¤ì„ ìˆ˜í–‰í•˜ëŠ” í´ë˜ìŠ¤
+    ¼ÒÄÏ°ú DB¸¦ °ü¸®ÇÏ°í °¢Á¾ ±â´ÉµéÀ» ¼öÇàÇÏ´Â Å¬·¡½º
     """
     list_server_socket = []
     list_client_socket = []
     list_client_receiver = []
     client_connector = 0
     food_server_db = 0
+    top5_list = []
+    user_top5_list = []
 
     def __init__(self):
         self.food_server_db = server_db.FoodServerDB()
 
     def get_list_client_socket(self):
         """
-        í´ë¼ì´ì–¸íŠ¸ ì†Œì¼“ ì •ë³´ë¥¼ ë¦¬ìŠ¤íŠ¸ë¡œ ë°˜í™˜í•©ë‹ˆë‹¤.
+        Å¬¶óÀÌ¾ğÆ® ¼ÒÄÏ Á¤º¸¸¦ ¸®½ºÆ®·Î ¹İÈ¯ÇÕ´Ï´Ù.
         """
         return self.list_client_socket
 
     def create_connector(self):
         """
-        ì†Œì¼“ ì„œë²„ì˜ ì»¤ë„¥í„°ë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
+        ¼ÒÄÏ ¼­¹öÀÇ Ä¿³ØÅÍ¸¦ »ı¼ºÇÕ´Ï´Ù.
         """
         self.client_connector = FoodServerConnector(self.list_client_socket, self.list_client_receiver)
         self.client_connector.start()
 
     def exit_server(self):
         """
-        ì„œë²„ë¥¼ ì¢…ë£Œí•©ë‹ˆë‹¤.
+        ¼­¹ö¸¦ Á¾·áÇÕ´Ï´Ù.
         """
         for client_socket in self.list_client_receiver:
             client_socket.exit_receiver()
@@ -53,12 +56,12 @@ class FoodServer:
 
     def create_csv_row(self, data, filename="output.csv", file_location="./"):
         """
-        list í˜•íƒœë¡œ ë°›ì€ dataë¥¼ csv íŒŒì¼ í˜•íƒœë¡œ ë§Œë“¤ì–´ëƒ…ë‹ˆë‹¤.
-        dataëŠ” ë¦¬ìŠ¤íŠ¸ë“¤ë¡œ ì´ë£¨ì–´ì ¸ìˆìœ¼ë©° ë¦¬ìŠ¤íŠ¸ì˜ ì²«ë²ˆì§¸ ê°’ì€ ê° í–‰ì˜ ì œëª©ì„ ëœ»í•©ë‹ˆë‹¤.
-        filenameì„ ì¸ì ê°’ìœ¼ë¡œ ì£¼ì§€ ì•ŠëŠ”ë‹¤ë©´ output.csv ì„ ì œëª©ìœ¼ë¡œ ì‚¬ìš©í•©ë‹ˆë‹¤.
+        list ÇüÅÂ·Î ¹ŞÀº data¸¦ csv ÆÄÀÏ ÇüÅÂ·Î ¸¸µé¾î³À´Ï´Ù.
+        data´Â ¸®½ºÆ®µé·Î ÀÌ·ç¾îÁ®ÀÖÀ¸¸ç ¸®½ºÆ®ÀÇ Ã¹¹øÂ° °ªÀº °¢ ÇàÀÇ Á¦¸ñÀ» ¶æÇÕ´Ï´Ù.
+        filenameÀ» ÀÎÀÚ °ªÀ¸·Î ÁÖÁö ¾Ê´Â´Ù¸é output.csv À» Á¦¸ñÀ¸·Î »ç¿ëÇÕ´Ï´Ù.
         """
         fieldnames = []
-        # ì œëª©ì„ fieldnamesì— ì €ì¥í•©ë‹ˆë‹¤.
+        # Á¦¸ñÀ» fieldnames¿¡ ÀúÀåÇÕ´Ï´Ù.
         for i in data[0]:
             fieldnames.append(i)
         file_name = file_location + filename
@@ -70,21 +73,21 @@ class FoodServer:
 
     def create_search_data(self, num=500):
         """
-        ëœë¤ìœ¼ë¡œ ìœ ì €ì˜ ê²€ìƒ‰ ê¸°ë¡ì„ ë§Œë“¤ì–´ì£¼ëŠ” í•¨ìˆ˜
+        ·£´ıÀ¸·Î À¯ÀúÀÇ °Ë»ö ±â·ÏÀ» ¸¸µé¾îÁÖ´Â ÇÔ¼ö
         :param num
         :return:
         """
         test_search = []
 
         example = \
-            [["í•œì‹", "ë¹„ë¹”ë°¥", "ë¶ˆê³ ê¸°", "ëœì¥ì°Œê°œ", "ê¹€ì¹˜ì°Œê°œ", "ê¹€ì¹˜ì „", "ë–¡ê°ˆë¹„"],
-             ["ì¤‘ì‹", "ìì¥ë©´", "ì§¬ë½•", "íƒ•ìˆ˜ìœ¡", "ê¹í’ê¸°", "íŒ”ë³´ì±„", "ì¹ ë¦¬ìƒˆìš°"],
-             ["ì–‘ì‹", "íŒŒìŠ¤íƒ€", "ìŠ¤í…Œì´í¬", "ìƒëŸ¬ë“œ", "ì˜¤ë¯ˆë ›", "í–„ë²„ê±°", "í”¼ì"],
-             ["ì¼ì‹", "ì´ˆë°¥", "ê°€ì¸ ë™", "ìš°ë™", "í…ë™", "ë¼ë©˜", "ì‚¬ì‹œë¯¸"],
-             ["ë¶„ì‹", "ë–¡ë³¶ì´", "ê¹€ë°¥", "íŠ€ê¹€", "ìˆœëŒ€", "ì˜¤ë…", "ì£¼ë¨¹ë°¥"]]
+            [["ÇÑ½Ä", "ºñºö¹ä", "ºÒ°í±â", "µÈÀåÂî°³", "±èÄ¡Âî°³", "±èÄ¡Àü", "¶±°¥ºñ"],
+             ["Áß½Ä", "ÀÚÀå¸é", "Â«»Í", "ÅÁ¼öÀ°", "±ñÇ³±â", "ÆÈº¸Ã¤", "Ä¥¸®»õ¿ì"],
+             ["¾ç½Ä", "ÆÄ½ºÅ¸", "½ºÅ×ÀÌÅ©", "»ø·¯µå", "¿À¹É·¿", "ÇÜ¹ö°Å", "ÇÇÀÚ"],
+             ["ÀÏ½Ä", "ÃÊ¹ä", "°¡Ã÷µ¿", "¿ìµ¿", "ÅÙµ¿", "¶ó¸à", "»ç½Ã¹Ì"],
+             ["ºĞ½Ä", "¶±ººÀÌ", "±è¹ä", "Æ¢±è", "¼ø´ë", "¿Àµ­", "ÁÖ¸Ô¹ä"]]
 
         temp_times = []
-        # ëœë¤ìœ¼ë¡œ ì‹œê°„ì„ ìƒì„±
+        # ·£´ıÀ¸·Î ½Ã°£À» »ı¼º
         for i in range(num):
             start = datetime.now()
             end = start + timedelta(days=7)
@@ -93,27 +96,27 @@ class FoodServer:
 
         for i in range(num):
             temp = []
-            temp.append(i + 1)
-            temp.append(randint(1, 6))
+            temp.append(i)
+            temp.append(randint(0, 5))
             temp.append(temp_times[i])
-            temp.append(randint(1,60))
+            temp.append(randint(1, 60))
             test_search.append(temp)
 
         return test_search
 
     def create_food_data(self):
         """
-        ëœë¤ìœ¼ë¡œ ìŒì‹ ë°ì´í„°ë¥¼ ë§Œë“¤ì–´ì£¼ëŠ” í•¨ìˆ˜
+        ·£´ıÀ¸·Î À½½Ä µ¥ÀÌÅÍ¸¦ ¸¸µé¾îÁÖ´Â ÇÔ¼ö
         :param csv_flag:
         :return:
         """
         test_food = []
         example = \
-            [["í•œì‹", "ë¹„ë¹”ë°¥", "ë¶ˆê³ ê¸°", "ëœì¥ì°Œê°œ", "ê¹€ì¹˜ì°Œê°œ", "ê¹€ì¹˜ì „", "ë–¡ê°ˆë¹„"],
-             ["ì¤‘ì‹", "ìì¥ë©´", "ì§¬ë½•", "íƒ•ìˆ˜ìœ¡", "ê¹í’ê¸°", "íŒ”ë³´ì±„", "ì¹ ë¦¬ìƒˆìš°"],
-             ["ì–‘ì‹", "íŒŒìŠ¤íƒ€", "ìŠ¤í…Œì´í¬", "ìƒëŸ¬ë“œ", "ì˜¤ë¯ˆë ›", "í–„ë²„ê±°", "í”¼ì"],
-             ["ì¼ì‹", "ì´ˆë°¥", "ê°€ì¸ ë™", "ìš°ë™", "í…ë™", "ë¼ë©˜", "ì‚¬ì‹œë¯¸"],
-             ["ë¶„ì‹", "ë–¡ë³¶ì´", "ê¹€ë°¥", "íŠ€ê¹€", "ìˆœëŒ€", "ì˜¤ë…", "ì£¼ë¨¹ë°¥"]]
+            [["ÇÑ½Ä", "ºñºö¹ä", "ºÒ°í±â", "µÈÀåÂî°³", "±èÄ¡Âî°³", "±èÄ¡Àü", "¶±°¥ºñ"],
+             ["Áß½Ä", "ÀÚÀå¸é", "Â«»Í", "ÅÁ¼öÀ°", "±ñÇ³±â", "ÆÈº¸Ã¤", "Ä¥¸®»õ¿ì"],
+             ["¾ç½Ä", "ÆÄ½ºÅ¸", "½ºÅ×ÀÌÅ©", "»ø·¯µå", "¿À¹É·¿", "ÇÜ¹ö°Å", "ÇÇÀÚ"],
+             ["ÀÏ½Ä", "ÃÊ¹ä", "°¡Ã÷µ¿", "¿ìµ¿", "ÅÙµ¿", "¶ó¸à", "»ç½Ã¹Ì"],
+             ["ºĞ½Ä", "¶±ººÀÌ", "±è¹ä", "Æ¢±è", "¼ø´ë", "¿Àµ­", "ÁÖ¸Ô¹ä"]]
         flag = 0
         food_num = 1
         rest_num = 0
@@ -144,7 +147,7 @@ class FoodServer:
 
     def create_user_data(self, csv_flag=False):
         """
-        ëœë¤ìœ¼ë¡œ ìœ ì € ë°ì´í„°ë¥¼ ë§Œë“¤ì–´ì£¼ëŠ” í•¨ìˆ˜
+        ·£´ıÀ¸·Î À¯Àú µ¥ÀÌÅÍ¸¦ ¸¸µé¾îÁÖ´Â ÇÔ¼ö
         :param csv_flag:
         :return:
         """
@@ -166,25 +169,25 @@ class FoodServer:
     
     def create_rest_data(self, csv_flag=False):
         """
-        ëœë¤ìœ¼ë¡œ ê°€ê²Œ ë°ì´í„°ë¥¼ ë§Œë“¤ì–´ì£¼ëŠ” í•¨ìˆ˜
+        ·£´ıÀ¸·Î °¡°Ô µ¥ÀÌÅÍ¸¦ ¸¸µé¾îÁÖ´Â ÇÔ¼ö
         :param csv_flag:
         :return:
         """
         test_rest = []
-        user_name = ["ì¬í•˜", "ì§€í˜¸", "ë¯¼í˜¸", "ì˜ˆì€"]
-        category = ["í•œì‹", "ì¤‘ì‹", "ì–‘ì‹", "ì¼ì‹", "ë¶„ì‹"]
-        sample_name = [["êµ¬ë°±ì§‘", "ì „ì£¼ì‹ë‹¹", "ì •ì„±ì°¬", "ìœ¤ì”¨ë„¤", "í°ë«¼"],
-                       ["í•˜ë¦¬ì›", "ìŠ¹ë¦¬ì¥", "ì¤‘êµ­ì§‘", "ì¤‘í™”ë§ˆë£¨", "í–¥ë§Œì˜¥"],
-                       ["ë¦¬í‹€ íŒŒìŠ¤íƒ€", "í”¼í„°íŒ¬ ìŠ¤í…Œì´í¬", "ì„œì–‘ì§‘", "ëª½ë§ˆë¥´ ì–¸ë•", "ì„œê°€ì•¤ì¿¡"],
-                       ["ìŠ¤ì‹œí˜„", "ìŠ¤ì‹œë§ˆë£¨", "í™ì—°ì§‘", "ìŠ¤íƒ€ë™", "í…ë™"],
-                       ["ìœ¤ê°€ë„¤", "ê¹€ë°¥ì²œêµ­", "í•œì„± ë¶„ì‹", "ì‹ ì „ë–¡ë³¶ì´", "ë¯¸ìŠ¤í„° ëˆê¹ŒìŠ¤", "ë¼ë©´ ì¼ë²ˆì§€"]]
+        user_name = ["ÀçÇÏ", "ÁöÈ£", "¹ÎÈ£", "¿¹Àº"]
+        category = ["ÇÑ½Ä", "Áß½Ä", "¾ç½Ä", "ÀÏ½Ä", "ºĞ½Ä"]
+        sample_name = [["±¸¹éÁı", "ÀüÁÖ½Ä´ç", "Á¤¼ºÂù", "À±¾¾³×", "Å«¸ş"],
+                       ["ÇÏ¸®¿ø", "½Â¸®Àå", "Áß±¹Áı", "ÁßÈ­¸¶·ç", "Çâ¸¸¿Á"],
+                       ["¸®Æ² ÆÄ½ºÅ¸", "ÇÇÅÍÆÒ ½ºÅ×ÀÌÅ©", "¼­¾çÁı", "¸ù¸¶¸£ ¾ğ´ö", "¼­°¡¾ØÄî"],
+                       ["½º½ÃÇö", "½º½Ã¸¶·ç", "È«¿¬Áı", "½ºÅ¸µ¿", "ÅÙµ¿"],
+                       ["À±°¡³×", "±è¹äÃµ±¹", "ÇÑ¼º ºĞ½Ä", "½ÅÀü¶±ººÀÌ", "¹Ì½ºÅÍ µ·±î½º", "¶ó¸é ÀÏ¹øÁö"]]
         rest_num = 1
 
         for name in user_name:
             for i in range(5):
                 temp = []
                 temp.append(rest_num)
-                temp.append(name + "ì˜ " + sample_name[i][randrange(len(sample_name[i]))])
+                temp.append(name + "ÀÇ " + sample_name[i][randrange(len(sample_name[i]))])
                 temp.append(category[i])
                 temp.append(randint(-500, 500))
                 temp.append(randint(-500, 500))
@@ -203,14 +206,14 @@ class FoodServer:
 
         for data in result:
             temp = list(data)
-            temp.append(user_num-1)
+            temp.append(user_num)
             result1.append(temp)
         result1.insert(0, title)
-        self.create_csv_row(result1, "person{0}.csv".format(user_num - 1), "./data/person/")
+        self.create_csv_row(result1, "person{0}.csv".format(user_num), "./data/person/")
 
     def add_search_data(self, user_num, food_num):
         """
-        search í…Œì´ë¸”ì— ê°’ì„ ì¶”ê°€í•˜ëŠ” í•¨ìˆ˜
+        search Å×ÀÌºí¿¡ °ªÀ» Ãß°¡ÇÏ´Â ÇÔ¼ö
         :param user_num:
         :param food_num:
         :return:
@@ -223,48 +226,42 @@ class FoodServer:
     def create_basic_table(self):
         self.food_server_db.create_table()
 
-    def food_analysis(self, top5_list, user_ac_list):
+    def food_analysis(self, input_id_int, top5_list, user_ac_list):
+        top5_list.clear()
+        user_ac_list.clear()
         input_path = "./data/person/"
         rows_num = 20
-        check_percent = 0.20
 
-        # id ë¡œê·¸ì¸
-        input_id = input("idë¥¼ ì…ë ¥ : ")
-        input_id_int = int(input_id)
-
-        # í˜„ì¬ ì‹œê°„ ì „ë¶€
+        # ÇöÀç ½Ã°£ ÀüºÎ
         currentTime = datetime.now()
-        # 7ì¼ì „
+        # 7ÀÏÀü
         currentTime7 = currentTime - timedelta(days=7)
 
-        # í˜„ì¬ ì‹œê°„ë§Œ
+        # ÇöÀç ½Ã°£¸¸
         ct = currentTime.hour
 
         allFiles = glob.glob(input_path + "*.csv")
-        print(input_path)
         people = len(allFiles)
         allData = pd.DataFrame()
         list_ = []
         classification_ = []
         allClassification_df = []
 
-        # ëª¨ë“  íŒŒì¼ ë°ì´í„° í†µí•©
+        # ¸ğµç ÆÄÀÏ µ¥ÀÌÅÍ ÅëÇÕ
         for file_ in allFiles:
             df = pd.read_csv(file_, index_col=None, header=0, encoding="euc-kr")
             Classification_df = df[['Search_Time', 'Search_Word']]
             list_.append(df)
             classification_.append(Classification_df)
 
-        # BestSeller ì‹œì‘
+        # BestSeller ½ÃÀÛ
         allClassification_df = pd.concat(classification_)
         allData = pd.concat(list_)
 
-        # 7ì¼ ì´ìƒëœ row ì œê±°
+        # 7ÀÏ ÀÌ»óµÈ row Á¦°Å
         allData['Search_Time'] = pd.to_datetime(allData['Search_Time'])
 
-        # allData = allData.loc[(allData['Search_Time'] > currentTime7), :]
-
-        # ì‹œê°„ ë¶„ë¥˜
+        # ½Ã°£ ºĞ·ù
         Time = []
         temp_Menu = allData.Search_Word
         Menu = temp_Menu.values.tolist()
@@ -277,16 +274,11 @@ class FoodServer:
                 temp_Time = int(temp_t[11:13])
                 Time.append(temp_Time)
 
-        # ë©”ë‰´ì™€ ì‹œê°„ë§Œ ë°›ëŠ” ë°ì´í„°ìƒì„±
+        # ¸Ş´º¿Í ½Ã°£¸¸ ¹Ş´Â µ¥ÀÌÅÍ»ı¼º
         data = pd.DataFrame({'Time': Time,
                              'Menu': Menu})
-        # ë©”ë‰´
-        menu_list = str(list(data.Menu)).strip('[]').replace("'", "").replace(",", "")
 
-        # ì „ì²´ ë°ì´í„° ì¸ì½”ë”©
-        onehot_data = pd.get_dummies(data.Menu)
-
-        # ê°ê°ì˜ ì‹œê°„ê³¼ ë‚ ì§œ ë³„ë¡œ list ìƒì„±
+        # °¢°¢ÀÇ ½Ã°£°ú ³¯Â¥ º°·Î list »ı¼º
         timeDic = {}
         timeDic['Morning'] = data.loc[(10 >= data["Time"]) & (data["Time"] > 6), :]
         timeDic['Lunch'] = data.loc[(10 >= data["Time"]) & (data["Time"] > 6), :]
@@ -297,8 +289,6 @@ class FoodServer:
         timeDic['Midnight'] = Midnight1.append(Midnight2)
 
         def printTimeTop5(ct, time):
-            top_count = 0
-            print(str(ct) + "ì‹œ ê¸°ì¤€ íƒ‘5")
             # one hot encoding
             time_df = pd.get_dummies(timeDic[time].Menu)
 
@@ -306,14 +296,9 @@ class FoodServer:
             sort_time_df = sum_time_df.sort_values(by="count", ascending=False)
             top_time_df = sort_time_df[0:5].index.tolist()
 
-            for item in top_time_df:
-                top_count += 1
-                print(str(top_count) + ":" + item)
-            print('----------------------------------------------')
-
             return list(top_time_df)
 
-        # ì‹œê°„ë³„ë¡œ ë‹¤ë£¨ëŠ” list ì¢…ë¥˜
+        # ½Ã°£º°·Î ´Ù·ç´Â list Á¾·ù
         if ct >= 10 and 6 > ct:
             temp = printTimeTop5(ct, 'Morning')
         elif 16 >= ct and ct > 10:
@@ -323,18 +308,17 @@ class FoodServer:
         else:
             temp = printTimeTop5(ct, 'Midnight')
 
-        for i in temp:
-            top5_list.append(i)
+        top5_list.append(temp)
 
         def addPersonData(top5List, count):
             personList = []
             for i in range(count):
-                # ì‚¬ëŒ0ì˜ ë°ì´í„° ë¶„ì„
+                # »ç¶÷0ÀÇ µ¥ÀÌÅÍ ºĞ¼®
                 person_df = allData.loc[allData["id"] == i]
                 person_search_df = person_df[["Search_Category", "Search_Word"]]
                 person_onehot_search_word_data = pd.get_dummies(person_search_df.Search_Word)
 
-                # ì‚¬ëŒ0ì˜ íƒ‘5 ë©”ë‰´
+                # »ç¶÷0ÀÇ Å¾5 ¸Ş´º
                 sum_person_df = pd.DataFrame(person_onehot_search_word_data.sum(axis=0), columns=["count"])
                 sort_sum_person_df = sum_person_df.sort_values(by="count", ascending=False)
                 top5_person_df = sort_sum_person_df[0:5].index.tolist()
@@ -342,7 +326,7 @@ class FoodServer:
                 person_data = person_onehot_search_word_data
                 person_label = person_df[["Search_Category"]]
 
-                # í•™ìŠµ ì „ìš© ë°ì´í„°ì™€ í…ŒìŠ¤íŠ¸ ì „ìš© ë°ì´í„°ë¡œ ë‚˜ëˆ„ê¸°
+                # ÇĞ½À Àü¿ë µ¥ÀÌÅÍ¿Í Å×½ºÆ® Àü¿ë µ¥ÀÌÅÍ·Î ³ª´©±â
                 person_data_train, person_data_test, person_label_train, person_label_test = train_test_split(
                     person_data,
                     person_label,
@@ -355,9 +339,9 @@ class FoodServer:
         personTop5Datas = []
         personDatas = addPersonData(personTop5Datas, people)
 
-        # í•™ìŠµ, ì˜ˆì¸¡
+        # ÇĞ½À, ¿¹Ãø
 
-        # ì‚¬ëŒë³„ ì·¨í–¥ ì¼ì¹˜ìœ¨
+        # »ç¶÷º° ÃëÇâ ÀÏÄ¡À²
         ac_scores = []
         for i in range(len(personDatas)):
             scoreList = []
@@ -366,94 +350,30 @@ class FoodServer:
             if len(scoreList) != 0:
                 ac_scores.append(scoreList)
 
-        # ì·¨í–¥ ì¼ì¹˜ìœ¨ ì¶œë ¥
-        # for i in range(len(ac_scores)):
-        #    for j in range(len(ac_scores[i])):
-        #        newStr = str(i) + str(j + 1 + i) + 'ì •ë‹µë¥  : '
-        #        print(newStr, ac_scores[i][j])
+        # ÃëÇâ¿¡ µû¸¥ ÃßÃµ
+        id_ac_list = []
+        for i in range(input_id_int):
+            id_ac_list.append(ac_scores[i][input_id_int - 1 - i])
 
-        # ì·¨í–¥ì— ë”°ë¥¸ ì¶”ì²œ
-        def recommend(id):
-            canFind = False
-            print(ac_scores)
-            for i in range(id):
-                print(i, " > ", ac_scores[i][id - 1 - i])
-                if float(ac_scores[i][id - 1 - i]) > check_percent:
-                    canFind = True
-                    top_count = 0
-                    print(str(id) + "ë‹˜ê³¼ ë¹„ìŠ·í•œ ì·¨í–¥ì„ ê°€ì§„ " + str(i) + "ë‹˜ì˜ ë©”ë‰´ íƒ‘5")
-                    for item in personTop5Datas[i]:
-                        top_count += 1
-                        print(str(top_count) + ":" + item)
+        if input_id_int < len(ac_scores):
+            for i in range(len(ac_scores[input_id_int])):
+                id_ac_list.append(ac_scores[input_id_int][i])
 
-            if id < len(ac_scores):
-                for i in range(len(ac_scores[id])):
-                    print(i, " : ", ac_scores[id][i])
-                    if float(ac_scores[id][i]) > check_percent:
-                        canFind = True
-                        top_count = 0
-                        top5Index = id + i + 1
-                        print(str(id) + "ë‹˜ê³¼ ë¹„ìŠ·í•œ ì·¨í–¥ì„ ê°€ì§„ " + str(top5Index) + "ë‹˜ì˜ ë©”ë‰´ íƒ‘5")
-                        for item in personTop5Datas[top5Index]:
-                            top_count += 1
-                            print(str(top_count) + ":" + item)
+        id_ac_list.insert(input_id_int, -1)
+        max_idx = id_ac_list.index(max(id_ac_list))
+        user_ac_list.append(personTop5Datas[max_idx])
+        #print(ac_scores)
 
-            if canFind == False:
-                print(str(id) + "ë‹˜ê³¼ ë¹„ìŠ·í•œ ì·¨í–¥ì˜ íšŒì›ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.")
-
-        recommend(input_id_int)
-        """
-
-        # ì‚¬ëŒë³„ ì¹´í…Œê³ ë¦¬ íƒ‘5 ì¶œë ¥
-        # ì¹´í…Œê³ ë¦¬ ì…ë ¥ ë° ê²€ìƒ‰ì–´ ë°›ìŒ
-        def personal_taste(id):
-            # ì§€ì—­ ë³€ìˆ˜
-            top_count = 0
-            person_df = allData.loc[allData["id"] == id]
-
-            # í•œëª…ì˜ íƒ‘5 ì¹´í…Œê³ ë¦¬
-            person_onehot_category_data = pd.get_dummies(person_df.Search_Category)
-            sum_person_df = pd.DataFrame(person_onehot_category_data.sum(axis=0), columns=["count"])
-            # ì¹´í…Œê³ ë¦¬ ê¸°ì¤€ìœ¼ë¡œ ì˜¤ë¦„ì°¨ìˆœ ì •ë¦¬
-            sort_sum_person_df = sum_person_df.sort_values(by="count", ascending=False)
-            top5_person_df = sort_sum_person_df[0:5].index.tolist()
-            print("person" + str(id) + "ë‹˜ì˜ ì¹´í…Œê³ ë¦¬ íƒ‘5")
-
-            for item in top5_person_df:
-                top_count += 1
-                print(str(top_count) + ":" + item)
-
-            # ë…¸ê°€ë‹¤ ìš© ì½”ë“œ
-            # searchCategory = 'ì–‘ì‹'
-            # searchWord = 'í”¼ì'
-            
-
-            print("---------------------------")
-            #searchCategory = input('ì¹´í…Œê³ ë¦¬ : ')
-            searchWord = input('ê²€ìƒ‰ì–´ : ')
-            searchTime = currentTime
-
-            df = pd.DataFrame(
-                {"id": [id], "Search_Time": [searchTime], "Search_Category": [searchCategory],
-                 "Search_Word": [searchWord]})
-            result = person_df.append(df)
-            result.to_csv(input_path + "person" + str(id) + ".csv", encoding="euc-kr",
-                          index=False)
-              
-
-        print("---------------------------")
-        # ë…¸ê°€ë‹¤ìš©
-        # for item in range(6):
-        # personal_taste(1)
-        # id input
-        personal_taste(input_id_int)
-
-        print("---------------------------")"""
+    def update_user_top5(self, user_num):
+        self.user_top5_list.clear()
+        self.top5_list.clear()
+        self.food_analysis(int(user_num), self.top5_list, self.user_top5_list)
+        self.food_server_db.update_user_top5(user_num, self.user_top5_list[0])
 
 
 class FoodServerConnector(threading.Thread):
     """
-    í´ë¼ì´ì–¸íŠ¸ì™€ì˜ ì—°ê²°ì„ ìœ„í•´ ëŒ€ê¸°í•˜ëŠ” ì»¤ë„¥í„°
+    Å¬¶óÀÌ¾ğÆ®¿ÍÀÇ ¿¬°áÀ» À§ÇØ ´ë±âÇÏ´Â Ä¿³ØÅÍ
     """
     list_client_socket = []
     list_client_receiver = []
@@ -473,17 +393,17 @@ class FoodServerConnector(threading.Thread):
         self.flag = 0
 
     def run(self):
-        # ì†Œì¼“ ìƒì„±
+        # ¼ÒÄÏ »ı¼º
         _server_socket = socket(AF_INET, SOCK_STREAM)
 
-        # ì†Œì¼“ ì£¼ì†Œ ì •ë³´ í• ë‹¹
+        # ¼ÒÄÏ ÁÖ¼Ò Á¤º¸ ÇÒ´ç
         _server_socket.bind(ADDR)
         print('[Now] : Bind')
 
-        # ì—°ê²° ìˆ˜ì‹  ëŒ€ê¸° ìƒíƒœ(ì¸ì ê°’ì€ ëª‡ ëª…ê¹Œì§€ ì ‘ì†ì„ í—ˆìš©í•  ê²ƒì¸ì§€ ëœ»í•¨)
+        # ¿¬°á ¼ö½Å ´ë±â »óÅÂ(ÀÎÀÚ °ªÀº ¸î ¸í±îÁö Á¢¼ÓÀ» Çã¿ëÇÒ °ÍÀÎÁö ¶æÇÔ)
         _server_socket.listen(100)
         while self.flag:
-            # ì—°ê²° ìˆ˜ë½
+            # ¿¬°á ¼ö¶ô
             _client_socket, self.addr_info = _server_socket.accept()
             self.list_client_socket.append(_client_socket)
             print('[Now] : Accept')
@@ -497,18 +417,20 @@ class FoodServerConnector(threading.Thread):
 
 class FoodServerReceiver(threading.Thread):
     """
-    í´ë¼ì´ì–¸íŠ¸ë“¤ì˜ ë©”ì„¸ì§€ë¥¼ ë°›ê¸° ìœ„í•´ ëŒ€ê¸°í•˜ëŠ” ë¦¬ì‹œë²„
+    Å¬¶óÀÌ¾ğÆ®µéÀÇ ¸Ş¼¼Áö¸¦ ¹Ş±â À§ÇØ ´ë±âÇÏ´Â ¸®½Ã¹ö
     """
     client_socket = 0
     flag = 1
     list_client_socket = []
     food_server_db = 0
+    food_server = 0
 
     def __init__(self, client_socket, list_client_socket):
         threading.Thread.__init__(self)
         self.client_socket = client_socket
         self.list_client_socket = list_client_socket
         self.food_server_db = server_db.FoodServerDB()
+        self.food_server = FoodServer()
 
     def exit_receiver(self):
         self.flag = 0
@@ -518,30 +440,38 @@ class FoodServerReceiver(threading.Thread):
             try:
                 print('[Now] : Waiting Msg')
                 data = self.client_socket.recv(BUFSIZE)
-                self.process_recv_msg(data)
-                print('[Recv] : ', data.decode("euc-kr"))
+                msg = data.decode("euc-kr")
+                print('[Recv] : ', msg)
+                self.process_recv_msg(msg)
             except:
                 print("[Close] : ", self.client_socket)
                 self.list_client_socket.remove(self.client_socket)
                 break
 
     def process_recv_msg(self, msg):
-        msg = msg.decode("euc-kr")
         msg_list = msg.split("//")
         cmd = msg_list[0]
         print("[Cmd] : " + cmd)
         if cmd == "1":
+            # ·Î±×ÀÎ ¼º°ø, ½ÇÆĞ
             id = msg_list[1]
             pwd = msg_list[2]
             rows = self.food_server_db.get_user_using_info(id, pwd)
-            #ë¡œê·¸ì¸ ì„±ê³µ
             if len(rows) == 1:
-                msg = "2//1//" + str(rows[0][0]) + "//" + rows[0][1] + "//" + rows[0][2] + "//"
+                user_num = str(rows[0][0])
+                self.food_server.update_user_top5(user_num)
+                msg = "2//1//" + user_num + "//" + "//".join(rows[0][2:]) + "//"
             else:
                 msg = "2//0//"
             self.send_msg(msg)
+        elif cmd == "3":
+            # ¸ŞÀÎ ¾×Æ¼ºñÆ¼ ÁøÀÔ
+            top5_msg = "4//" + "//".join(self.food_server.top5_list[0]) + "//"
+            self.send_msg(top5_msg)
+
         else:
-            self.send_msg("ì‹¤íŒ¨")
+            self.send_msg("½ÇÆĞ")
+
 
     def send_msg(self, msg):
         send_msg = msg

@@ -1,5 +1,6 @@
 package ac.kr.hansung.foodsharing;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -9,7 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MenuItem;
 
-import static ac.kr.hansung.foodsharing.InitActivity.userInfo;
+import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -51,10 +52,9 @@ public class MainActivity extends AppCompatActivity {
         chatFragment = new ChatFragment();
         infoFragment = new InfoFragment();
 
-        Log.d("MainActivity", "아이디 : " + userInfo.getId());
-        Log.d("MainActivity", "패스워드 : " + userInfo.getPwd());
-        Log.d("MainActivity", "번호 : " + userInfo.getUserNum());
-
+        Log.d("MainActivity", "유저 번호 : " + mobileInfo.getUserNum());
+        Log.d("MainActivity", "아이디 : " + mobileInfo.getId());
+        Log.d("MainActivity", "패스워드 : " + mobileInfo.getPwd());
 
         setFrag(R.id.navigation_home);
     }

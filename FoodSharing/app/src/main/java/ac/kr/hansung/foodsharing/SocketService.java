@@ -1,8 +1,6 @@
 package ac.kr.hansung.foodsharing;
 
 import android.app.Service;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -11,10 +9,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
-import static ac.kr.hansung.foodsharing.InitActivity.userInfo;
+import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;
 
 public class SocketService extends Service {
-    private final static String addr = "192.168.0.7";
+    private final static String addr = "192.168.0.36";
     private final static int port = 10000;
     ConnectThread socket;
 
@@ -59,6 +57,9 @@ public class SocketService extends Service {
         if (command.equals("1") == true) {
             String msg = "1//" + intent.getStringExtra("id") + "//" + intent.getStringExtra("pwd") + "//";
             socket.sendMsg(msg);
+        } else if (command.equals("3") == true) {
+            String msg = "3//";
+            socket.sendMsg(msg);
         }
     }
 
@@ -88,7 +89,7 @@ public class SocketService extends Service {
                 try {
                     byte[] b = new byte[128];
                     dis.read(b);
-                    String receivedMsg = new String(b);
+                    String receivedMsg = new String(b, "euc-kr");
                     receivedMsg = receivedMsg.trim();
                     processRecvMsg(receivedMsg);
 
@@ -107,14 +108,18 @@ public class SocketService extends Service {
             String cmd = msgArr[0];
             if (cmd.equals("2")) {
                 if (msgArr[1].equals("1")) {
-                    userInfo.setUserNum(Integer.parseInt(msgArr[1]));
-                    userInfo.setId(msgArr[2]);
-                    userInfo.setPwd(msgArr[3]);
+                    mobileInfo.setUserNum(Integer.parseInt(msgArr[1]));
+                    mobileInfo.setId(msgArr[2]);
+                    mobileInfo.setPwd(msgArr[3]);
 
                     Intent nextIntent = new Intent(getApplicationContext(), MainActivity.class);
                     nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(nextIntent);
                 }
+            }
+            else if (cmd.equals("4")) {
+                String[] temp = {msgArr[1], msgArr[2], msgArr[3], msgArr[4], msgArr[5]};
+                mobileInfo.setTop5Food(temp);
             }
 
         }

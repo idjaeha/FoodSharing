@@ -6,14 +6,14 @@ import android.os.Bundle;
 
 
 public class InitActivity extends AppCompatActivity {
-    public static UserInfo userInfo;
+    public static MobileInfo mobileInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_init);
 
-        userInfo = new UserInfo(0, "","");
+        mobileInfo = new MobileInfo(0, "","");
     }
 
     @Override

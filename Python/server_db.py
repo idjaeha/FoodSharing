@@ -1,3 +1,5 @@
+#-*- coding: euc-kr -*-
+
 import sqlite3
 
 
@@ -10,7 +12,7 @@ class FoodServerDB:
 
     def create_table(self):
         """
-        ê¸°ë³¸ì ì¸ í‘¸ë“œì‰ì–´ë§ DBì™€ í…Œì´ë¸”ì„ ìƒì„±í•©ë‹ˆë‹¤.
+        ±âº»ÀûÀÎ Çªµå½¦¾î¸µ DB¿Í Å×ÀÌºíÀ» »ı¼ºÇÕ´Ï´Ù.
         :return:
         """
         self.conn = sqlite3.connect('./data/db/FoodSharing.db')
@@ -38,7 +40,7 @@ class FoodServerDB:
 
     def insert_restaurant_data(self, values):
         """
-        í•´ë‹¹ í…Œì´ë¸”ì— ë°ì´í„°ë¥¼ ë„£ìŠµë‹ˆë‹¤.
+        ÇØ´ç Å×ÀÌºí¿¡ µ¥ÀÌÅÍ¸¦ ³Ö½À´Ï´Ù.
         :param values:
         :return:
         """
@@ -47,7 +49,7 @@ class FoodServerDB:
 
         sql = "INSERT INTO rest VALUES (?, ?, ?, ?, ?)"
         self.cur.execute(sql, values)
-        #ë§ì€ ë°ì´í„°ë¥¼ ë„£ê³ ì í• ë•Œ ì‚¬ìš©
+        #¸¹Àº µ¥ÀÌÅÍ¸¦ ³Ö°íÀÚ ÇÒ¶§ »ç¿ë
         #self.cur.executemany(sql, values)
 
         self.conn.commit()
@@ -55,7 +57,7 @@ class FoodServerDB:
 
     def insert_food_data(self, values):
         """
-        í•´ë‹¹ í…Œì´ë¸”ì— ë°ì´í„°ë¥¼ ë„£ìŠµë‹ˆë‹¤.
+        ÇØ´ç Å×ÀÌºí¿¡ µ¥ÀÌÅÍ¸¦ ³Ö½À´Ï´Ù.
         :param values:
         :return:
         """
@@ -64,7 +66,7 @@ class FoodServerDB:
 
         sql = "INSERT INTO food VALUES (?, ?, ?, ?)"
         self.cur.execute(sql, values)
-        #ë§ì€ ë°ì´í„°ë¥¼ ë„£ê³ ì í• ë•Œ ì‚¬ìš©
+        #¸¹Àº µ¥ÀÌÅÍ¸¦ ³Ö°íÀÚ ÇÒ¶§ »ç¿ë
         #self.cur.executemany(sql, values)
 
         self.conn.commit()
@@ -72,7 +74,7 @@ class FoodServerDB:
 
     def insert_user_data(self, values):
         """
-        í•´ë‹¹ í…Œì´ë¸”ì— ë°ì´í„°ë¥¼ ë„£ìŠµë‹ˆë‹¤.
+        ÇØ´ç Å×ÀÌºí¿¡ µ¥ÀÌÅÍ¸¦ ³Ö½À´Ï´Ù.
         (user_num INTEGER PRIMARY KEY, id text, pwd text,
         food1 INTEGER, food2 INTEGER,food3 INTEGER, food4 INTEGER, food5 INTEGER)
         :param values:
@@ -83,7 +85,7 @@ class FoodServerDB:
 
         sql = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ? ,? ,?)"
         #self.cur.execute(sql, values)
-        #ë§ì€ ë°ì´í„°ë¥¼ ë„£ê³ ì í• ë•Œ ì‚¬ìš©
+        #¸¹Àº µ¥ÀÌÅÍ¸¦ ³Ö°íÀÚ ÇÒ¶§ »ç¿ë
         self.cur.executemany(sql, values)
 
         self.conn.commit()
@@ -91,7 +93,7 @@ class FoodServerDB:
 
     def insert_search_data(self, values):
         """
-        í•´ë‹¹ í…Œì´ë¸”ì— ë°ì´í„°ë¥¼ ë„£ìŠµë‹ˆë‹¤.
+        ÇØ´ç Å×ÀÌºí¿¡ µ¥ÀÌÅÍ¸¦ ³Ö½À´Ï´Ù.
         :param values:
         :return:
         """
@@ -99,16 +101,16 @@ class FoodServerDB:
         self.cur = self.conn.cursor()
 
         sql = "INSERT INTO search VALUES (?, ?, ?, ?)"
-        self.cur.execute(sql, values)
-        #ë§ì€ ë°ì´í„°ë¥¼ ë„£ê³ ì í• ë•Œ ì‚¬ìš©
-        #self.cur.executemany(sql, values)
+        #self.cur.execute(sql, values)
+        #¸¹Àº µ¥ÀÌÅÍ¸¦ ³Ö°íÀÚ ÇÒ¶§ »ç¿ë
+        self.cur.executemany(sql, values)
 
         self.conn.commit()
         self.conn.close()
 
     def select_human_csv(self, user_num):
         """
-        ë¶„ì„ ì¸í’‹ í˜•ì‹ì— ë§ëŠ” ë°ì´í„°ë¥¼ ë½‘ì•„ëƒ…ë‹ˆë‹¤.
+        ºĞ¼® ÀÎÇ² Çü½Ä¿¡ ¸Â´Â µ¥ÀÌÅÍ¸¦ »Ì¾Æ³À´Ï´Ù.
         :return:
         """
         self.conn = sqlite3.connect('./data/db/FoodSharing.db')
@@ -126,8 +128,8 @@ class FoodServerDB:
 
     def select_all_data(self, table):
         """
-        í…Œì´ë¸”ì—ì„œ ëª¨ë“  ë°ì´í„°ë¥¼ ì½ì–´ì˜µë‹ˆë‹¤.
-        ì¸ìì˜ í˜•ì‹ì€ ìŠ¤íŠ¸ë§ìœ¼ë¡œ ë°›ìŠµë‹ˆë‹¤.
+        Å×ÀÌºí¿¡¼­ ¸ğµç µ¥ÀÌÅÍ¸¦ ÀĞ¾î¿É´Ï´Ù.
+        ÀÎÀÚÀÇ Çü½ÄÀº ½ºÆ®¸µÀ¸·Î ¹Ş½À´Ï´Ù.
         :param table:
         :return:
         """
@@ -145,7 +147,7 @@ class FoodServerDB:
 
     def delete_all_data(self, table):
         """
-        tableì— ëª¨ë“  ë°ì´í„°ë¥¼ ì‚­ì œí•©ë‹ˆë‹¤.
+        table¿¡ ¸ğµç µ¥ÀÌÅÍ¸¦ »èÁ¦ÇÕ´Ï´Ù.
         :param table:
         :return:
         """
@@ -159,6 +161,7 @@ class FoodServerDB:
         self.conn.close()
 
     def execute_sql(self, sql):
+        # ÇØ´ç sql¹®À» ½ÇÇàÇÕ´Ï´Ù.
         self.conn = sqlite3.connect('./data/db/FoodSharing.db')
         self.cur = self.conn.cursor()
 
@@ -168,6 +171,7 @@ class FoodServerDB:
         self.conn.close()
 
     def get_data_num(self, table):
+        # Å×ÀÌºí ¾ÈÀÇ µ¥ÀÌÅÍ¿¡ °³¼ö¸¦ °¡Á®¿É´Ï´Ù.
         self.conn = sqlite3.connect('./data/db/FoodSharing.db')
         self.cur = self.conn.cursor()
 
@@ -182,12 +186,41 @@ class FoodServerDB:
     def get_user_using_info(self, id, pwd):
         self.conn = sqlite3.connect('./data/db/FoodSharing.db')
         self.cur = self.conn.cursor()
+        try:
+            sql = "select * from user where id = '{0}' and pwd = '{1}'".format(id, pwd)
+            self.cur.execute(sql)
+        except:
+            self.conn.close()
+            return []
 
-        sql = "select * from user where id = {0} and pwd = {1}".format(id, pwd)
-        self.cur.execute(sql)
         rows = self.cur.fetchall()
 
         self.conn.commit()
         self.conn.close()
         return rows
+
+    def update_user_top5(self, user_num, top5_list):
+        self.conn = sqlite3.connect('./data/db/FoodSharing.db')
+        self.cur = self.conn.cursor()
+        try:
+            sql = "update user set food1 = '{0}' where user_num = {1}".format(top5_list[0], user_num)
+            self.cur.execute(sql)
+            sql = "update user set food2 = '{0}' where user_num = {1}".format(top5_list[1], user_num)
+            self.cur.execute(sql)
+            sql = "update user set food3 = '{0}' where user_num = {1}".format(top5_list[2], user_num)
+            self.cur.execute(sql)
+            sql = "update user set food4 = '{0}' where user_num = {1}".format(top5_list[3], user_num)
+            self.cur.execute(sql)
+            sql = "update user set food5 = '{0}' where user_num = {1}".format(top5_list[4], user_num)
+            self.cur.execute(sql)
+        except:
+            self.conn.close()
+            return []
+
+        rows = self.cur.fetchall()
+
+        self.conn.commit()
+        self.conn.close()
+        return rows
+
 
