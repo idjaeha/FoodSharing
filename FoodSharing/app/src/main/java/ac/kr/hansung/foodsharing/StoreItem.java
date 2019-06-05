@@ -4,17 +4,17 @@ public class StoreItem {
 
     String storeName;
     String storeCategory;
-    int restId;
+    int restNum;
 
     public StoreItem(String name) {
         storeName = name;
-        restId = -1;
+        restNum = -1;
     }
 
-    public StoreItem(String name, String categoryName, int restId) {
+    public StoreItem(String name, String categoryName, int restNum) {
         storeName = name;
         this.storeCategory = categoryName;
-        this.restId = restId;
+        this.restNum = restNum;
     }
 
     public String getStoreName() {
@@ -33,11 +33,11 @@ public class StoreItem {
         this.storeCategory = categoryName;
     }
 
-    public int getRestId() {
-        return restId;
+    public int getRestNum() {
+        return restNum;
     }
 
-    public void setRestId(int restId) {
-        this.restId = restId;
+    public void setRestNum(int restNum) {
+        this.restNum = restNum;
     }
 }

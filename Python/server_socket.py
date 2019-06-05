@@ -14,7 +14,7 @@ BUFSIZE = 1024
 HOST = ''
 PORT = 10000
 ADDR = (HOST, PORT)
-
+room_info = {}
 
 class FoodServer:
     """
@@ -499,9 +499,38 @@ class FoodServerReceiver(threading.Thread):
                     for j in range(len(rest[i])):
                         rest[i][j] = str(rest[i][j])
                     msg = msg + "//".join(rest[i]) + "//"
-
             self.send_msg(msg)
-
+        elif cmd == "7":
+            # 가게 내의 음식 목록 요청
+            rest_num = msg_list[1]
+            food_list, rest_name = self.food_server_db.select_food_data(rest_num)
+            num = len(food_list)
+            print(rest_name)
+            msg = "8//{0}//{1}//".format(num, rest_name[0][0])
+            for i in range(num):
+                food_list[i] = list(food_list[i])
+                for j in range(2):
+                    food_list[i][j] = str(food_list[i][j])
+                msg = msg + "//".join(food_list[i]) + "//"
+            self.send_msg(msg)
+        elif cmd == "9":
+            # 채팅방 입장 요청
+            food_num = msg_list[1]
+            info = self.food_server_db.select_food_name_data(food_num)
+            rest_name, food_name = info[0]
+            if room_info.get(food_num) is None:
+                room_info[food_num] = []
+            room_info[food_num].append(self.client_socket)
+            print(room_info)
+            num = len(room_info[food_num])
+            msg = "10//{0}//{1}//{2}//".format(rest_name, food_name, num)
+            self.send_msg(msg)
+        elif cmd == "11":
+            # 메세지 전송
+            food_num = msg_list[3]
+            print(room_info[food_num])
+            for c_s in room_info[food_num]:
+                self.send_msg_using_socket(msg, c_s)
         else:
             self.send_msg("실패")
 
@@ -510,4 +539,9 @@ class FoodServerReceiver(threading.Thread):
         send_msg = msg
         self.client_socket.send(send_msg.encode("euc-kr"))
         print("[SEND] : " + send_msg)
+
+    def send_msg_using_socket(self, msg, tmp_soc):
+        tmp_soc.send(msg.encode("euc-kr"))
+        print("[SEND] : " + msg)
+
 

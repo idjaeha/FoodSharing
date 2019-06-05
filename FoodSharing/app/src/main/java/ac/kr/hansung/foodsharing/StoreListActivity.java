@@ -27,7 +27,12 @@ public class StoreListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 StoreItem item = (StoreItem) adapter.getItem(position);
-                //Toast.makeText(getApplicationContext(), "선택 : " + item.getRestId(), Toast.LENGTH_SHORT).show();
+                int restNum = item.getRestNum();
+                Intent menuIntent = new Intent(getApplicationContext(), SocketService.class);
+                menuIntent.putExtra("command", "7");
+                menuIntent.putExtra("rest_num", restNum);
+                startService(menuIntent);
+                finish();
             }
         });
 
@@ -37,29 +42,11 @@ public class StoreListActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-
-        /*
-        Intent socketIntent = new Intent(this, SocketService.class);
-
-        int flag = intent.getIntExtra("food_num", -1);
-        if (flag >= 0  && flag < 5) {
-            socketIntent.putExtra("command", "5");
-            socketIntent.putExtra("flag", "0");
-            socketIntent.putExtra("category", foodInfo.getCategoryList()[flag]);
-
-        } else if (flag >= 10 && flag < 40) {
-            socketIntent.putExtra("command", "5");
-            socketIntent.putExtra("flag", "1");
-            socketIntent.putExtra("food_name", foodInfo.getFoodList()[flag - 10]);
-        }
-        */
         // 현재 음식점들의 데이터를 가져옵니다.
         Intent intent = getIntent();
         int num = intent.getIntExtra("num", 0);
         for (int idx = 0; idx < num; idx++)
             adapter.addItem(new StoreItem(intent.getStringExtra("rest_name" + idx), intent.getStringExtra("category_name" + idx), intent.getIntExtra("rest_num" + idx, 100)));
-
-
     }
 
 }

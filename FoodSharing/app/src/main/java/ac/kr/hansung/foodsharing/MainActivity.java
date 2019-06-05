@@ -15,7 +15,7 @@ import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;
 
 public class MainActivity extends AppCompatActivity {
     MainFragment mainFragment;
-    ChatFragment chatFragment;
+    RecommendFragment recommendFragment;
     InfoFragment infoFragment;
     FragmentManager fm;
     FragmentTransaction tran;
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         mainFragment = new MainFragment();
-        chatFragment = new ChatFragment();
+        recommendFragment = new RecommendFragment();
         infoFragment = new InfoFragment();
 
         Log.d("MainActivity", "유저 번호 : " + mobileInfo.getUserNum());
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 tran.commit();
                 break;
             case R.id.navigation_chat:
-                tran.replace(R.id.frag_frame, chatFragment);
+                tran.replace(R.id.frag_frame, recommendFragment);
                 tran.commit();
                 break;
             case R.id.navigation_info:

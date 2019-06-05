@@ -1,14 +1,17 @@
 package ac.kr.hansung.foodsharing;
 
+import java.util.ArrayList;
+
 public class MobileInfo {
     String id, pwd;
     int userNum;
     int x, y;
-    String[] foodNum;
+    int foodNum;
     String[] top5Food;
     String nickName;
     boolean isConnectServer;
     boolean isSocketStart;
+    ArrayList<String[]> messages;
 
     public String getNickName() {
         return nickName;
@@ -44,20 +47,19 @@ public class MobileInfo {
 
     public MobileInfo(int userNum, String id, String pwd) {
         this.id = id;
-        this.nickName = id;
+        this.nickName = "hello world";
         this.pwd = pwd;
         this.userNum = userNum;
         this.x = this.y = 5;
-        this.foodNum = new String[5];
-        for (int i = 0; i < 5; i++) {
-            this.foodNum[i] = "";
-        }
+        this.foodNum = -1;
         this.top5Food = new String[5];
         for (int i = 0; i < 5; i++) {
             this.top5Food[i] = "";
         }
         this.isConnectServer = false;
         this.isSocketStart = false;
+        this.messages = new ArrayList<String[]>();
+        messages.add(new String[]{"1", "jaeha", "hello"});
 
     }
 
@@ -99,13 +101,5 @@ public class MobileInfo {
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public String[] getFoodNum() {
-        return foodNum;
-    }
-
-    public void setFoodNum(String[] foodNum) {
-        this.foodNum = foodNum;
     }
 }

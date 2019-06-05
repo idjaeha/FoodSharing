@@ -32,7 +32,7 @@ public class InitActivity extends AppCompatActivity {
             public void onClick(View v) {
                 addr = editTextIP.getText().toString();
                 port = Integer.parseInt(editTextPort.getText().toString());
-                connectServer(true);
+                connectServer(false);
             }
         });
 

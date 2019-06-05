@@ -8,8 +8,5 @@ def run():
     food_server.create_connector()
 
 
-
-
-
 if __name__ == '__main__':
     run()

@@ -192,7 +192,6 @@ class FoodServerDB:
 
             return rows
 
-
     def get_data_num(self, table):
         # 테이블 안의 데이터에 개수를 가져옵니다.
         self.conn = sqlite3.connect('./data/db/FoodSharing.db')
@@ -244,6 +243,48 @@ class FoodServerDB:
 
         self.conn.commit()
         self.conn.close()
+        return rows
+
+    def select_food_data(self, rest_num):
+        """
+        food data를 food_num 과 food_name으로 가져옵니다.
+        :param rest_num:
+        :return:
+        """
+        self.conn = sqlite3.connect('./data/db/FoodSharing.db')
+        self.cur = self.conn.cursor()
+        sql = "select food_num, food_name from food where rest_num = '{0}'".format(rest_num)
+        self.cur.execute(sql)
+        self.conn.commit()
+
+        rows = self.cur.fetchall()
+
+        sql = "select rest_name from rest where rest_num = '{0}'".format(rest_num)
+        self.cur.execute(sql)
+        self.conn.commit()
+
+        name = self.cur.fetchall()
+
+        self.conn.close()
+
+        return rows, name
+
+    def select_food_name_data(self, food_num):
+        """
+        food num을 통해 rest_num 과 food_num을 가져옵니다.
+        :param food_num:
+        :return:
+        """
+        self.conn = sqlite3.connect('./data/db/FoodSharing.db')
+        self.cur = self.conn.cursor()
+        sql = sql = "select r.rest_name, f.food_name from rest r, food f where f.rest_num = r.rest_num and f.food_num = '{0}'".format(food_num)
+        self.cur.execute(sql)
+        self.conn.commit()
+
+        rows = self.cur.fetchall()
+
+        self.conn.close()
+
         return rows
 
 

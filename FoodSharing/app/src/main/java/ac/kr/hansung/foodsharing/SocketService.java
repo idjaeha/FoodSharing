@@ -8,12 +8,11 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
 import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;
 
 public class SocketService extends Service {
-    public static String addr = "192.168.0.36";
+    public static String addr = "192.168.0.7";
     public static int port = 10000;
     ConnectThread socket;
     static public SocketService mySocketService;
@@ -79,7 +78,16 @@ public class SocketService extends Service {
                 String msg = "5//1//" + intent.getStringExtra("food_name") + "//";
                 socket.sendMsg(msg);
             }
-
+        } else if (command.equals("7")) {
+            String msg = "7//" + intent.getIntExtra("rest_num", 0) + "//";
+            socket.sendMsg(msg);
+        } else if (command.equals("9")) {
+            String msg = "9//" + intent.getIntExtra("food_num", 0) + "//";
+            socket.sendMsg(msg);
+            mobileInfo.foodNum = intent.getIntExtra("food_num", 0);
+        } else if (command.equals("11")) {
+            String msg = intent.getStringExtra("msg");
+            socket.sendMsg(msg);
         }
     }
 
@@ -167,6 +175,39 @@ public class SocketService extends Service {
                     nextIntent.putExtra("category_name" + i, categoryName);
                 }
                 startActivity(nextIntent);
+            } else if (cmd.equals("8")) {
+                //가게 내의 음식 목록 응답
+                int num = Integer.parseInt(msgArr[1]);
+                String title = msgArr[2];
+                Intent nextIntent = new Intent(getApplicationContext(), MenuActivity.class);
+                nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                nextIntent.putExtra("num", num);
+                nextIntent.putExtra("title", title);
+                for (int i = 0; i < num; i++) {
+                    int foodNum = Integer.parseInt(msgArr[3 + 2 * i]);
+                    String foodName = msgArr[4 + 2 * i];
+                    nextIntent.putExtra("food_num" + i, foodNum);
+                    nextIntent.putExtra("food_name" + i, foodName);
+                }
+                startActivity(nextIntent);
+            } else if (cmd.equals("10")) {
+                //채팅방 입장 응답
+                String title = msgArr[1];
+                String subTitle = msgArr[2];
+                int num = Integer.parseInt(msgArr[3]);
+                Intent nextIntent = new Intent(getApplicationContext(), ChatActivity.class);
+                nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                nextIntent.putExtra("rest_name", title);
+                nextIntent.putExtra("food_name", subTitle);
+                nextIntent.putExtra("num", num);
+                startActivity(nextIntent);
+            } else if (cmd.equals("11")) {
+                //메시지 전송 응답
+                int userNum = Integer.parseInt(msgArr[1]);
+                String userNickName = msgArr[2];
+                String userMsg = msgArr[3];
+                Log.d("SocketService", msg);
+
             }
 
         }
