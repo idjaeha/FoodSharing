@@ -7,7 +7,6 @@ public class FoodInfo {
     String[] categoryList;
     int[] foodImgList;
 
-
     public FoodInfo() {
          foodList = new String[]{
                  "비빔밥", "불고기", "된장찌개", "김치찌개", "김치전", "떡갈비",

@@ -1,6 +1,7 @@
 package ac.kr.hansung.foodsharing;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import static ac.kr.hansung.foodsharing.InitActivity.foodInfo;
 import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;

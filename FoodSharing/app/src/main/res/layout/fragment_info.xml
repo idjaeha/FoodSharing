@@ -7,24 +7,41 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
-        <EditText
-            android:id="@+id/editText_user_x"
-            android:layout_width="135dp"
-            android:layout_height="64dp"
-            android:inputType="number"
-            android:hint="x 좌표"/>
-        <EditText
-            android:id="@+id/editText_user_y"
-            android:layout_width="135dp"
-            android:layout_height="64dp"
-            android:inputType="number"
-            android:hint="y 좌표"/>
-        <Button
-            android:id="@+id/button_user_xy"
-            android:layout_width="135dp"
-            android:layout_height="64dp"
-            android:text="변경"/>
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/editText_user_nickname"
+                android:layout_width="135dp"
+                android:layout_height="64dp"
+                android:inputType="text"
+                android:hint="닉네임"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/editText_user_x"
+                android:layout_width="135dp"
+                android:layout_height="64dp"
+                android:inputType="number"
+                android:hint="x 좌표"/>
+            <EditText
+                android:id="@+id/editText_user_y"
+                android:layout_width="135dp"
+                android:layout_height="64dp"
+                android:inputType="number"
+                android:hint="y 좌표"/>
+            <Button
+                android:id="@+id/button_user_check"
+                android:layout_width="135dp"
+                android:layout_height="64dp"
+                android:text="변경"/>
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>

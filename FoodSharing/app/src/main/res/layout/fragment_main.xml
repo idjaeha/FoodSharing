@@ -13,12 +13,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <ImageView
+            <TextView
                 android:id="@+id/title_big"
-                android:layout_width="240dp"
+                android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
-                android:src="@drawable/title_big"/>
+                android:gravity="center"
+                android:textAlignment="center"
+                android:text="Food Sharing"
+                android:textSize="50sp"
+                android:textColor="#000"
+                android:textStyle="bold" />
 
             <GridLayout
                 android:layout_width="wrap_content"
@@ -64,13 +69,19 @@
 
             </GridLayout>
 
-            <ImageView
+            <TextView
                 android:id="@+id/title_recommend"
-                android:layout_width="240dp"
+                android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:layout_margin="20dp"
                 android:layout_gravity="center"
-                android:src="@drawable/title_recommend"/>
+                android:gravity="center"
+                android:textAlignment="center"
+                android:text="실시간 Top5"
+                android:textSize="40sp"
+                android:textColor="#000"
+                android:textStyle="bold"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"/>
 
             <LinearLayout
                 android:layout_width="300dp"

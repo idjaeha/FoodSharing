@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
 
-BUFSIZE = 128
+BUFSIZE = 1024
 HOST = ''
 PORT = 10000
 ADDR = (HOST, PORT)
@@ -25,8 +25,8 @@ class FoodServer:
     list_client_receiver = []
     client_connector = 0
     food_server_db = 0
-    top5_list = []
-    user_top5_list = []
+    top5_list = [[]]
+    user_top5_list = [[]]
 
     def __init__(self):
         self.food_server_db = server_db.FoodServerDB()
@@ -227,8 +227,6 @@ class FoodServer:
         self.food_server_db.create_table()
 
     def food_analysis(self, input_id_int, top5_list, user_ac_list):
-        top5_list.clear()
-        user_ac_list.clear()
         input_path = "./data/person/"
         rows_num = 20
 
@@ -308,7 +306,7 @@ class FoodServer:
         else:
             temp = printTimeTop5(ct, 'Midnight')
 
-        top5_list.append(temp)
+        top5_list[0] = temp
 
         def addPersonData(top5List, count):
             personList = []
@@ -361,12 +359,17 @@ class FoodServer:
 
         id_ac_list.insert(input_id_int, -1)
         max_idx = id_ac_list.index(max(id_ac_list))
-        user_ac_list.append(personTop5Datas[max_idx])
+        user_ac_list[0] = personTop5Datas[max_idx]
         #print(ac_scores)
 
     def update_user_top5(self, user_num, flag=True):
-        self.user_top5_list.clear()
-        self.top5_list.clear()
+        """
+        실시간 검색 top5_list와 인자로 받은 유저 취향에 맞춘 top5를 얻을 수 있는 메서드
+        flag를 False로 하게 되면 해당 정보가 db에는 넘어가지 않는다.
+        :param user_num: 
+        :param flag: 
+        :return: 
+        """
         self.food_analysis(int(user_num), self.top5_list, self.user_top5_list)
         if flag:
             self.food_server_db.update_user_top5(user_num, self.user_top5_list[0])
@@ -453,7 +456,10 @@ class FoodServerReceiver(threading.Thread):
         msg_list = msg.split("//")
         cmd = msg_list[0]
         print("[Cmd] : " + cmd)
-        if cmd == "1":
+        if cmd == "0":
+            # 서버 연결 응답
+            self.send_msg("0//")
+        elif cmd == "1":
             # 로그인 성공, 실패
             id = msg_list[1]
             pwd = msg_list[2]
@@ -473,7 +479,27 @@ class FoodServerReceiver(threading.Thread):
             self.send_msg(top5_msg)
         elif cmd == "5":
             # 식당 자료 요청
-            msg = "6//0//1//1//재하네 고기집//한식//1//2"
+            if msg_list[1] == "0":
+                category = msg_list[2]
+                rest = self.food_server_db.select_rest_data(category)
+                num = len(rest)
+                msg = "6//0//{0}//".format(num)
+                for i in range(num):
+                    rest[i] = list(rest[i])
+                    for j in range(len(rest[i])):
+                        rest[i][j] = str(rest[i][j])
+                    msg = msg + "//".join(rest[i]) + "//"
+            elif msg_list[1] == "1":
+                food = msg_list[2]
+                rest = self.food_server_db.select_rest_data(food, True)
+                num = len(rest)
+                msg = "6//1//{0}//".format(num)
+                for i in range(num):
+                    rest[i] = list(rest[i])
+                    for j in range(len(rest[i])):
+                        rest[i][j] = str(rest[i][j])
+                    msg = msg + "//".join(rest[i]) + "//"
+
             self.send_msg(msg)
 
         else:

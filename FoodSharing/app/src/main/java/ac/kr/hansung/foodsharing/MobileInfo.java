@@ -6,6 +6,33 @@ public class MobileInfo {
     int x, y;
     String[] foodNum;
     String[] top5Food;
+    String nickName;
+    boolean isConnectServer;
+    boolean isSocketStart;
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public boolean isConnectServer() {
+        return isConnectServer;
+    }
+
+    public void setConnectServer(boolean connectServer) {
+        isConnectServer = connectServer;
+    }
+
+    public boolean isSocketStart() {
+        return isSocketStart;
+    }
+
+    public void setSocketStart(boolean socketStart) {
+        isSocketStart = socketStart;
+    }
 
     public String[] getTop5Food() {
         return top5Food;
@@ -17,17 +44,21 @@ public class MobileInfo {
 
     public MobileInfo(int userNum, String id, String pwd) {
         this.id = id;
+        this.nickName = id;
         this.pwd = pwd;
         this.userNum = userNum;
-        this.x = this.y = 0;
+        this.x = this.y = 5;
         this.foodNum = new String[5];
-        for (int i = 0; i < 5; i ++) {
+        for (int i = 0; i < 5; i++) {
             this.foodNum[i] = "";
         }
         this.top5Food = new String[5];
-        for (int i = 0; i < 5; i ++) {
+        for (int i = 0; i < 5; i++) {
             this.top5Food[i] = "";
         }
+        this.isConnectServer = false;
+        this.isSocketStart = false;
+
     }
 
     public String getId() {

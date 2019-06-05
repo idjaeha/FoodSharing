@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;
 
 public class SocketService extends Service {
-    private final static String addr = "192.168.0.7";
-    private final static int port = 10000;
+    public static String addr = "192.168.0.36";
+    public static int port = 10000;
     ConnectThread socket;
     static public SocketService mySocketService;
 
@@ -54,21 +54,30 @@ public class SocketService extends Service {
 
         //null 값이면
         if (command == null) {
+            Log.d("SocketService", "cmd 값이 null입니다.");
             return;
         }
 
-        if (command.equals("1") == true) {
+        if (command.equals("0")) {
+            //연결 확인
+            String msg = "0//";
+            socket.sendMsg(msg);
+        } else if (command.equals("1") == true) {
+            //로그인 요청
             String msg = "1//" + intent.getStringExtra("id") + "//" + intent.getStringExtra("pwd") + "//";
             socket.sendMsg(msg);
         } else if (command.equals("3") == true) {
+            //top5 요청
             String msg = "3//";
             socket.sendMsg(msg);
         } else if (command.equals("5") == true) {
+            //가게 목록 요청
             if (intent.getStringExtra("flag").equals("0")) {
-                String msg = "5//" + intent.getStringExtra("category") + "//";
+                String msg = "5//0//" + intent.getStringExtra("category") + "//";
                 socket.sendMsg(msg);
             } else if (intent.getStringExtra("flag").equals("1")) {
-                return;
+                String msg = "5//1//" + intent.getStringExtra("food_name") + "//";
+                socket.sendMsg(msg);
             }
 
         }
@@ -83,28 +92,34 @@ public class SocketService extends Service {
         Socket soc = null;
         DataOutputStream dos;
         DataInputStream dis;
-        boolean socketAlive = false;
         public void run() {
             try {
                 soc = new Socket(addr, port);
                 dos = new DataOutputStream(soc.getOutputStream());
                 dis = new DataInputStream(soc.getInputStream());
+                mobileInfo.isSocketStart = true;
+                Log.d("SocketService", "정상 접속 성공");
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d("SocketService", "정상 접속 실패");
                 interrupt();
                 return;
             }
-            socketAlive = true;
+
             while (true) {
                 try {
-                    byte[] b = new byte[128];
-                    dis.read(b);
-                    String receivedMsg = new String(b, "euc-kr");
-                    receivedMsg = receivedMsg.trim();
-                    processRecvMsg(receivedMsg);
+                    if (soc != null) {
+                        byte[] b = new byte[1024];
+                        dis.read(b);
+                        String receivedMsg = new String(b, "euc-kr");
+                        receivedMsg = receivedMsg.trim();
+                        Log.d("SocketService", "서버에서 받은 메세지 : " + receivedMsg);
+                        processRecvMsg(receivedMsg);
 
-                    Log.d("SocketService", "서버에서 받은 메세지 : " + receivedMsg);
+
+                    } else {
+                        break;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d("SocketService", "서버와 연결 종료");
@@ -117,7 +132,11 @@ public class SocketService extends Service {
             msg = msg.trim();
             String[] msgArr = msg.split("//");
             String cmd = msgArr[0];
-            if (cmd.equals("2")) {
+
+            if (cmd.equals("0")) {
+                //연결 확인
+                mobileInfo.isConnectServer = true;
+            } else if (cmd.equals("2")) {
                 //로그인 응답
                 if (msgArr[1].equals("1")) {
                     mobileInfo.setUserNum(Integer.parseInt(msgArr[1]));
@@ -138,20 +157,16 @@ public class SocketService extends Service {
                 int num = Integer.parseInt(msgArr[2]);
                 Intent nextIntent = new Intent(getApplicationContext(), StoreListActivity.class);
                 nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (flag.equals("0")) {
-                    for (int i = 0; i < num; i++) {
-                        int restNum = Integer.parseInt(msgArr[3 + 5 * i]);
-                        String restName = msgArr[4 + 5 * i];
-                        String categoryName = msgArr[5 + 5 * i];
-                        nextIntent.putExtra("rest_num" + "1", restNum);
-                        nextIntent.putExtra("rest_name" + "1", restName);
-                        nextIntent.putExtra("category_name" + "1", categoryName);
-                    }
-                    startActivity(nextIntent);
-
-                } else if (flag.equals("1")) {
-
+                nextIntent.putExtra("num", num);
+                for (int i = 0; i < num; i++) {
+                    int restNum = Integer.parseInt(msgArr[3 + 5 * i]);
+                    String restName = msgArr[4 + 5 * i];
+                    String categoryName = msgArr[5 + 5 * i];
+                    nextIntent.putExtra("rest_num" + i, restNum);
+                    nextIntent.putExtra("rest_name" + i, restName);
+                    nextIntent.putExtra("category_name" + i, categoryName);
                 }
+                startActivity(nextIntent);
             }
 
         }
@@ -168,8 +183,8 @@ public class SocketService extends Service {
                     try {
                         if (soc != null) {
                             //dos = new DataOutputStream(soc.getOutputStream());
-                            byte[] sendMsgByte = new byte[128];
-                            String s = String.format("%-128s", msg.trim());
+                            byte[] sendMsgByte = new byte[1024];
+                            String s = String.format("%-1024s", msg.trim());
                             sendMsgByte = s.getBytes("euc-kr");
                             dos.write(sendMsgByte);
                         } else {
@@ -183,10 +198,6 @@ public class SocketService extends Service {
             }
             Thread sm = new Thread(new SendMsg(msg));
             sm.start();
-        }
-
-        public boolean isSocketAlive() {
-            return socketAlive;
         }
     }
 }

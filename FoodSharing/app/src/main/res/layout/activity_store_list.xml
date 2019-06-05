@@ -6,15 +6,21 @@
     android:orientation="vertical"
     tools:context=".StoreListActivity">
 
-    <Button
-        android:id="@+id/button_store_list_back"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="돌아가기" />
+        android:text="음식점 리스트"
+        android:textAlignment="center"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:textColor="#000"/>
 
     <ListView
+        android:id="@+id/listView_store_list2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView_store_list2"></ListView>
+        android:layout_height="match_parent">
+    </ListView>
+
 
 </LinearLayout>

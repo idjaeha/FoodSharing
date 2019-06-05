@@ -160,15 +160,38 @@ class FoodServerDB:
         self.conn.commit()
         self.conn.close()
 
-    def execute_sql(self, sql):
-        # 해당 sql문을 실행합니다.
-        self.conn = sqlite3.connect('./data/db/FoodSharing.db')
-        self.cur = self.conn.cursor()
+    def select_rest_data(self, category, flag=False):
+        """
+        rest 데이터를 가져옵니다.
+        :param category:
+        :return:
+        """
+        if not flag:
+            self.conn = sqlite3.connect('./data/db/FoodSharing.db')
+            self.cur = self.conn.cursor()
+            sql = "select * from rest where category = '{0}'".format(category)
+            #sql = "select * from rest"
+            self.cur.execute(sql)
+            self.conn.commit()
 
-        self.cur.execute(sql)
+            rows = self.cur.fetchall()
+            self.conn.close()
 
-        self.conn.commit()
-        self.conn.close()
+            return rows
+        else:
+            self.conn = sqlite3.connect('./data/db/FoodSharing.db')
+            self.cur = self.conn.cursor()
+            sql = "select r.* from rest r, food f where f.rest_num = r.rest_num and f.food_name = '{0}'".format(category)
+            if (flag):
+                print(sql)
+            self.cur.execute(sql)
+            self.conn.commit()
+
+            rows = self.cur.fetchall()
+            self.conn.close()
+
+            return rows
+
 
     def get_data_num(self, table):
         # 테이블 안의 데이터에 개수를 가져옵니다.
