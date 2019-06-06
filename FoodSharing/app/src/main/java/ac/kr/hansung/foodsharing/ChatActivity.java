@@ -1,8 +1,12 @@
 package ac.kr.hansung.foodsharing;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +21,7 @@ public class ChatActivity extends AppCompatActivity {
     EditText editTextChat;
     Button buttonChat;
     LinearLayout layoutChat;
+    public static Handler chatHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,23 @@ public class ChatActivity extends AppCompatActivity {
         buttonChat = findViewById(R.id.button_chat);
         layoutChat = findViewById(R.id.layout_chat);
 
+        chatHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                LinearLayout tmpLayout = new LinearLayout(getApplicationContext());
+                TextView tmp = new TextView(getApplicationContext());
+                tmpLayout.addView(tmp);
+                String stMsg = msg.getData().getString("msg");
+                int userNum = msg.getData().getInt("user_num",-1);
+                tmp.setText(stMsg);
+                if (userNum == mobileInfo.userNum) {
+                    tmpLayout.setGravity(Gravity.RIGHT);
+                }
+                layoutChat.addView(tmpLayout);
+            }
+        };
+
         buttonChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,6 +64,16 @@ public class ChatActivity extends AppCompatActivity {
                 startService(msgIntent);
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Intent chatoutIntent = new Intent(this, SocketService.class);
+        chatoutIntent.putExtra("command", "13");
+        chatoutIntent.putExtra("food_num", mobileInfo.foodNum);
+        mobileInfo.foodNum = -1;
+        startService(chatoutIntent);
     }
 
     @Override

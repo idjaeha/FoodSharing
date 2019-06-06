@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
 
-BUFSIZE = 1024
+BUFSIZE = 512
 HOST = ''
 PORT = 10000
 ADDR = (HOST, PORT)
@@ -468,7 +468,7 @@ class FoodServerReceiver(threading.Thread):
                 user_num = str(rows[0][0])
                 self.food_server.update_user_top5(user_num)
                 print(self.food_server.top5_list)
-                msg = "2//1//" + user_num + "//" + "//".join(rows[0][2:]) + "//"
+                msg = "2//1//" + user_num + "//"  + "//".join(rows[0][1:]) + "//"
             else:
                 msg = "2//0//"
             self.send_msg(msg)
@@ -505,7 +505,6 @@ class FoodServerReceiver(threading.Thread):
             rest_num = msg_list[1]
             food_list, rest_name = self.food_server_db.select_food_data(rest_num)
             num = len(food_list)
-            print(rest_name)
             msg = "8//{0}//{1}//".format(num, rest_name[0][0])
             for i in range(num):
                 food_list[i] = list(food_list[i])
@@ -521,16 +520,36 @@ class FoodServerReceiver(threading.Thread):
             if room_info.get(food_num) is None:
                 room_info[food_num] = []
             room_info[food_num].append(self.client_socket)
-            print(room_info)
             num = len(room_info[food_num])
             msg = "10//{0}//{1}//{2}//".format(rest_name, food_name, num)
             self.send_msg(msg)
+
+            # 검색 내용 추가
+            user_num = msg_list[2]
+            self.food_server.add_search_data(user_num, food_num)
         elif cmd == "11":
             # 메세지 전송
             food_num = msg_list[3]
             print(room_info[food_num])
             for c_s in room_info[food_num]:
                 self.send_msg_using_socket(msg, c_s)
+        elif cmd == "13":
+            # 채팅방 나가기 요청
+            # 채팅방 목록에서 제거
+            food_num = msg_list[1]
+            nick_name = msg_list[2]
+            room_info[food_num].remove(self.client_socket)
+
+            # 채팅방에 남아 있는 사람에 알림
+            num = len(room_info[food_num])
+            if num:
+                msg = "14//{0}//{1}".format(num, nick_name)
+                for c_s in room_info[food_num]:
+                    self.send_msg_using_socket(msg, c_s)
+        elif cmd == "20":
+            # 로그아웃
+            user_num = msg_list[1]
+            self.food_server.create_person_csv(user_num)
         else:
             self.send_msg("실패")
 

@@ -1,6 +1,7 @@
 package ac.kr.hansung.foodsharing;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -57,6 +58,20 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "패스워드 : " + mobileInfo.getPwd());
 
         setFrag(R.id.navigation_home);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent logoutIntent = new Intent(this, SocketService.class);
+        logoutIntent.putExtra("command", "20");
+        logoutIntent.putExtra("user_num", mobileInfo.userNum);
+        startService(logoutIntent);
     }
 
     public void setFrag(int n){    //프래그먼트를 교체하는 작업을 하는 메소드를 만들었습니다

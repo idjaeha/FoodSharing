@@ -2,18 +2,22 @@ package ac.kr.hansung.foodsharing;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
+import static ac.kr.hansung.foodsharing.ChatActivity.chatHandler;
 import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;
 
 public class SocketService extends Service {
-    public static String addr = "192.168.0.7";
+    public static String addr = "192.168.0.36";
     public static int port = 10000;
+    final int BUFSIZE = 512;
     ConnectThread socket;
     static public SocketService mySocketService;
 
@@ -82,11 +86,22 @@ public class SocketService extends Service {
             String msg = "7//" + intent.getIntExtra("rest_num", 0) + "//";
             socket.sendMsg(msg);
         } else if (command.equals("9")) {
-            String msg = "9//" + intent.getIntExtra("food_num", 0) + "//";
+            String msg = "9//" + intent.getIntExtra("food_num", 0) + "//" + mobileInfo.userNum + "//";
             socket.sendMsg(msg);
             mobileInfo.foodNum = intent.getIntExtra("food_num", 0);
         } else if (command.equals("11")) {
+            // 메시지 전송
             String msg = intent.getStringExtra("msg");
+            socket.sendMsg(msg);
+        } else if (command.equals("13")) {
+            // 채팅방 나가기 요청
+            int foodNum = intent.getIntExtra("food_num", -1);
+            String nickName = mobileInfo.nickName;
+            String msg = "13//" + foodNum + "//" + nickName + "//";
+            socket.sendMsg(msg);
+        } else if (command.equals("20")) {
+            //로그아웃
+            String msg = "20//" +  intent.getIntExtra("user_num", -1) + "//";
             socket.sendMsg(msg);
         }
     }
@@ -117,7 +132,7 @@ public class SocketService extends Service {
             while (true) {
                 try {
                     if (soc != null) {
-                        byte[] b = new byte[1024];
+                        byte[] b = new byte[BUFSIZE];
                         dis.read(b);
                         String receivedMsg = new String(b, "euc-kr");
                         receivedMsg = receivedMsg.trim();
@@ -147,9 +162,9 @@ public class SocketService extends Service {
             } else if (cmd.equals("2")) {
                 //로그인 응답
                 if (msgArr[1].equals("1")) {
-                    mobileInfo.setUserNum(Integer.parseInt(msgArr[1]));
-                    mobileInfo.setId(msgArr[2]);
-                    mobileInfo.setPwd(msgArr[3]);
+                    mobileInfo.setUserNum(Integer.parseInt(msgArr[2]));
+                    mobileInfo.setId(msgArr[3]);
+                    mobileInfo.setPwd(msgArr[4]);
 
                     Intent nextIntent = new Intent(getApplicationContext(), MainActivity.class);
                     nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -205,9 +220,20 @@ public class SocketService extends Service {
                 //메시지 전송 응답
                 int userNum = Integer.parseInt(msgArr[1]);
                 String userNickName = msgArr[2];
-                String userMsg = msgArr[3];
-                Log.d("SocketService", msg);
+                String userMsg = msgArr[4];
 
+                //채팅방으로 내용 전송
+                Bundle data = new Bundle();
+                Message chatMsg = new Message();
+                data.putString("msg", userMsg);
+                data.putInt("user_num", userNum);
+                chatMsg.setData(data);
+                chatHandler.sendMessage(chatMsg);
+
+                Log.d("SocketService", msg);
+            } else if (cmd.equals("14")) {
+                //채팅방 나가기 응답
+                Log.d("SocketService", msg);
             }
 
         }
@@ -224,8 +250,8 @@ public class SocketService extends Service {
                     try {
                         if (soc != null) {
                             //dos = new DataOutputStream(soc.getOutputStream());
-                            byte[] sendMsgByte = new byte[1024];
-                            String s = String.format("%-1024s", msg.trim());
+                            byte[] sendMsgByte = new byte[BUFSIZE];
+                            String s = String.format("%-512s", msg.trim());
                             sendMsgByte = s.getBytes("euc-kr");
                             dos.write(sendMsgByte);
                         } else {
