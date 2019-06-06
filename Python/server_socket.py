@@ -517,20 +517,27 @@ class FoodServerReceiver(threading.Thread):
             food_num = msg_list[1]
             info = self.food_server_db.select_food_name_data(food_num)
             rest_name, food_name = info[0]
+            nick_name = msg_list[3]
             if room_info.get(food_num) is None:
                 room_info[food_num] = []
             room_info[food_num].append(self.client_socket)
             num = len(room_info[food_num])
-            msg = "10//{0}//{1}//{2}//".format(rest_name, food_name, num)
+            msg = "10//{0}//{1}//{2}//{3}//{4}//".format(rest_name, food_name, num, nick_name, 1)
             self.send_msg(msg)
 
             # 검색 내용 추가
             user_num = msg_list[2]
             self.food_server.add_search_data(user_num, food_num)
+
+            # 이미 방에 있는 사람들에게 입장 알림
+            if num:
+                msg = "10//{0}//{1}//{2}//{3}//{4}//".format(rest_name, food_name, num, nick_name, 0)
+                for c_s in room_info[food_num]:
+                    if c_s != self.client_socket:
+                        self.send_msg_using_socket(msg, c_s)
         elif cmd == "11":
             # 메세지 전송
             food_num = msg_list[3]
-            print(room_info[food_num])
             for c_s in room_info[food_num]:
                 self.send_msg_using_socket(msg, c_s)
         elif cmd == "13":

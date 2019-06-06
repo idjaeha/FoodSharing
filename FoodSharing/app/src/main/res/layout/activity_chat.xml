@@ -32,10 +32,10 @@
             android:id="@+id/textView_chat_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="10dp"
             android:layout_gravity="right|bottom"
             android:textColor="#C20000"
-            android:text="참여 인원 : 0명"/>
+            android:text="0명"/>
     </LinearLayout>
 
     <LinearLayout
@@ -50,14 +50,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="40dp"
-                    android:layout_gravity="right"
-                    android:text="TextView" />
             </LinearLayout>
         </ScrollView>
 

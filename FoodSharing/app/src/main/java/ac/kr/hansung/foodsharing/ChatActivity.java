@@ -38,17 +38,40 @@ public class ChatActivity extends AppCompatActivity {
         chatHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
+                // 넘어오는 메세지를 이용하여 채팅방 UI를 변경합니다.
                 super.handleMessage(msg);
-                LinearLayout tmpLayout = new LinearLayout(getApplicationContext());
-                TextView tmp = new TextView(getApplicationContext());
-                tmpLayout.addView(tmp);
-                String stMsg = msg.getData().getString("msg");
-                int userNum = msg.getData().getInt("user_num",-1);
-                tmp.setText(stMsg);
-                if (userNum == mobileInfo.userNum) {
-                    tmpLayout.setGravity(Gravity.RIGHT);
+                String command = msg.getData().getString("command");
+
+                if (command.equals("msg")) {
+                    String stMsg = msg.getData().getString("msg");
+                    String nickName = msg.getData().getString("nick_name");
+                    int userNum = msg.getData().getInt("user_num", -1);
+
+                    if (userNum == mobileInfo.userNum) {
+                        ChatMyView tmpLayout = new ChatMyView(getApplicationContext());
+                        tmpLayout.setMsg(stMsg);
+                        layoutChat.addView(tmpLayout);
+                    } else {
+                        ChatOthersView tmpLayout = new ChatOthersView(getApplicationContext());
+                        tmpLayout.setMsg(stMsg);
+                        tmpLayout.setName(nickName);
+                        layoutChat.addView(tmpLayout);
+                    }
+                } else  if (command.equals("exit")) {
+                    int num = msg.getData().getInt("num");
+                    String nickName = msg.getData().getString("nick_name");
+                    textViewNum.setText(num + "명");
+                    ChatAlertView tmpLayout = new ChatAlertView(getApplicationContext());
+                    tmpLayout.setMsg(nickName + " 님이 나가셨습니다.");
+                    layoutChat.addView(tmpLayout);
+                } else if (command.equals("enter")) {
+                    int num = msg.getData().getInt("num");
+                    String nickName = msg.getData().getString("nick_name");
+                    textViewNum.setText(num + "명");
+                    ChatAlertView tmpLayout = new ChatAlertView(getApplicationContext());
+                    tmpLayout.setMsg(nickName + " 님이 입장하였습니다..");
+                    layoutChat.addView(tmpLayout);
                 }
-                layoutChat.addView(tmpLayout);
             }
         };
 

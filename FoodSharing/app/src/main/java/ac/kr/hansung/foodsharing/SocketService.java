@@ -86,7 +86,7 @@ public class SocketService extends Service {
             String msg = "7//" + intent.getIntExtra("rest_num", 0) + "//";
             socket.sendMsg(msg);
         } else if (command.equals("9")) {
-            String msg = "9//" + intent.getIntExtra("food_num", 0) + "//" + mobileInfo.userNum + "//";
+            String msg = "9//" + intent.getIntExtra("food_num", 0) + "//" + mobileInfo.userNum + "//" + mobileInfo.nickName + "//";
             socket.sendMsg(msg);
             mobileInfo.foodNum = intent.getIntExtra("food_num", 0);
         } else if (command.equals("11")) {
@@ -210,12 +210,27 @@ public class SocketService extends Service {
                 String title = msgArr[1];
                 String subTitle = msgArr[2];
                 int num = Integer.parseInt(msgArr[3]);
-                Intent nextIntent = new Intent(getApplicationContext(), ChatActivity.class);
-                nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                nextIntent.putExtra("rest_name", title);
-                nextIntent.putExtra("food_name", subTitle);
-                nextIntent.putExtra("num", num);
-                startActivity(nextIntent);
+                String nickName = msgArr[4];
+                int flag = Integer.parseInt(msgArr[5]);
+
+                if(flag == 1) {
+                    Intent nextIntent = new Intent(getApplicationContext(), ChatActivity.class);
+                    nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    nextIntent.putExtra("rest_name", title);
+                    nextIntent.putExtra("food_name", subTitle);
+                    nextIntent.putExtra("nick_name", subTitle);
+                    nextIntent.putExtra("num", num);
+                    startActivity(nextIntent);
+                } else if (flag == 0) {
+                    //남은 인원에게 알림
+                    Bundle data = new Bundle();
+                    Message alertMsg = new Message();
+                    data.putString("command", "enter");
+                    data.putInt("num", num);
+                    data.putString("nick_name", nickName);
+                    alertMsg.setData(data);
+                    chatHandler.sendMessage(alertMsg);
+                }
             } else if (cmd.equals("11")) {
                 //메시지 전송 응답
                 int userNum = Integer.parseInt(msgArr[1]);
@@ -226,6 +241,8 @@ public class SocketService extends Service {
                 Bundle data = new Bundle();
                 Message chatMsg = new Message();
                 data.putString("msg", userMsg);
+                data.putString("command","msg");
+                data.putString("nick_name", userNickName);
                 data.putInt("user_num", userNum);
                 chatMsg.setData(data);
                 chatHandler.sendMessage(chatMsg);
@@ -233,6 +250,18 @@ public class SocketService extends Service {
                 Log.d("SocketService", msg);
             } else if (cmd.equals("14")) {
                 //채팅방 나가기 응답
+                int num = Integer.parseInt(msgArr[1]);
+                String nickName = msgArr[2];
+
+                //남은 인원에게 알림
+                Bundle data = new Bundle();
+                Message alertMsg = new Message();
+                data.putString("command", "exit");
+                data.putInt("num", num);
+                data.putString("nick_name", nickName);
+                alertMsg.setData(data);
+                chatHandler.sendMessage(alertMsg);
+
                 Log.d("SocketService", msg);
             }
 
