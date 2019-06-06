@@ -18,18 +18,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:text="Food Sharing"
                 android:textSize="50sp"
                 android:textColor="#000"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:background="#FFFFFF"/>
 
             <GridLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:columnCount="3">
+                android:layout_marginTop="20dp"
+                android:columnCount="3"
+                android:background="#FFFFFF">
 
                 <ImageView
                     android:id="@+id/image_category1"
@@ -86,7 +90,7 @@
             <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
-                android:background="#009688"
+                android:background="#2B2B2B"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp">
                 <ImageView
@@ -101,7 +105,7 @@
             <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
-                android:background="#009688"
+                android:background="#2B2B2B"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp">
                 <ImageView
@@ -116,7 +120,7 @@
             <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
-                android:background="#009688"
+                android:background="#2B2B2B"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp">
                 <ImageView
@@ -131,7 +135,7 @@
             <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
-                android:background="#009688"
+                android:background="#2B2B2B"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp">
                 <ImageView
@@ -146,7 +150,7 @@
             <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="200dp"
-                android:background="#009688"
+                android:background="#2B2B2B"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp">
                 <ImageView

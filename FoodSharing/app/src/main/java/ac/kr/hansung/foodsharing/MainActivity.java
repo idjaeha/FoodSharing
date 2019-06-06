@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     setFrag(item.getItemId());
                     return true;
-                case R.id.navigation_chat:
+                case R.id.navigation_recommend:
                     setFrag(item.getItemId());
                     return true;
                 case R.id.navigation_info:
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 tran.replace(R.id.frag_frame, mainFragment);
                 tran.commit();
                 break;
-            case R.id.navigation_chat:
+            case R.id.navigation_recommend:
                 tran.replace(R.id.frag_frame, recommendFragment);
                 tran.commit();
                 break;

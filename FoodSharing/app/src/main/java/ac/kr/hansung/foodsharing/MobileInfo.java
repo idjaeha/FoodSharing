@@ -8,10 +8,10 @@ public class MobileInfo {
     int x, y;
     int foodNum;
     String[] top5Food;
+    String[] userTop5Food;
     String nickName;
     boolean isConnectServer;
     boolean isSocketStart;
-    ArrayList<String[]> messages;
 
     public String getNickName() {
         return nickName;
@@ -45,6 +45,22 @@ public class MobileInfo {
         this.top5Food = top5Food;
     }
 
+    public int getFoodNum() {
+        return foodNum;
+    }
+
+    public void setFoodNum(int foodNum) {
+        this.foodNum = foodNum;
+    }
+
+    public String[] getUserTop5Food() {
+        return userTop5Food;
+    }
+
+    public void setUserTop5Food(String[] userTop5Food) {
+        this.userTop5Food = userTop5Food;
+    }
+
     public MobileInfo(int userNum, String id, String pwd) {
         this.id = id;
         this.nickName = "hello world";
@@ -56,10 +72,12 @@ public class MobileInfo {
         for (int i = 0; i < 5; i++) {
             this.top5Food[i] = "";
         }
+        this.userTop5Food = new String[5];
+        for (int i = 0; i < 5; i++) {
+            this.userTop5Food[i] = "";
+        }
         this.isConnectServer = false;
         this.isSocketStart = false;
-        this.messages = new ArrayList<String[]>();
-        messages.add(new String[]{"1", "jaeha", "hello"});
 
     }
 

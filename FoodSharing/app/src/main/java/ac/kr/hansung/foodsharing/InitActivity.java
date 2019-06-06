@@ -44,7 +44,7 @@ public class InitActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d("InitActivity","Init mobile");
         super.onStart();
-        initApp();
+        //initApp();
     }
 
     private void initApp() {

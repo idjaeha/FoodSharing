@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import static ac.kr.hansung.foodsharing.InitActivity.mobileInfo;
 
 import java.util.ArrayList;
 

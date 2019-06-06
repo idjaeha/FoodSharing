@@ -553,6 +553,10 @@ class FoodServerReceiver(threading.Thread):
                 msg = "14//{0}//{1}".format(num, nick_name)
                 for c_s in room_info[food_num]:
                     self.send_msg_using_socket(msg, c_s)
+        elif cmd == "15":
+            #user top5 요청
+            msg = "16//" + "//".join(self.food_server.user_top5_list[0]) + "//"
+            self.send_msg(msg)
         elif cmd == "20":
             # 로그아웃
             user_num = msg_list[1]

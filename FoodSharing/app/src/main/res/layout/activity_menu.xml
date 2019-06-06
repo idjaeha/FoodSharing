@@ -8,18 +8,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_marginBottom="20dp">
         <TextView
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/textView_menu_title"
             android:text="제목"
-            android:textSize="50sp"
+            android:textSize="30sp"
             android:layout_gravity="center"
             android:gravity="center"
             android:textAlignment="center"
             android:textColor="#000"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -31,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="메뉴"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:layout_marginLeft="10dp"/>
         <ScrollView
             android:layout_width="match_parent"
@@ -44,7 +46,8 @@
                 <RadioGroup
                     android:id="@+id/radioGroup_menu"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp">
                 </RadioGroup>
             </LinearLayout>
         </ScrollView>
@@ -53,8 +56,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="right|center">
+        android:layout_weight="5"
+        android:gravity="right|top"
+        android:layout_marginRight="20dp">
         <Button
             android:id="@+id/button_food_select"
             android:layout_width="wrap_content"

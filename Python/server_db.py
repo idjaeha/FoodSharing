@@ -285,4 +285,22 @@ class FoodServerDB:
 
         return rows
 
+    def select_user_top5_data(self, user_num):
+        """
+        food num을 통해 rest_num 과 food_num을 가져옵니다.
+        :param food_num:
+        :return:
+        """
+        self.conn = sqlite3.connect('./data/db/FoodSharing.db')
+        self.cur = self.conn.cursor()
+        sql = sql = "select food1, food2, food3, food4, food5 from user where user_num = '{0}'".format(user_num)
+        self.cur.execute(sql)
+        self.conn.commit()
+
+        rows = self.cur.fetchall()
+
+        self.conn.close()
+
+        return rows
+
 

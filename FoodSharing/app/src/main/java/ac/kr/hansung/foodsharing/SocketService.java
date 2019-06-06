@@ -99,10 +99,15 @@ public class SocketService extends Service {
             String nickName = mobileInfo.nickName;
             String msg = "13//" + foodNum + "//" + nickName + "//";
             socket.sendMsg(msg);
+        } else if (command.equals("15")) {
+            //user top5 요청
+            String msg = "15//" + intent.getIntExtra("user_num", -1);
+            socket.sendMsg(msg);
         } else if (command.equals("20")) {
             //로그아웃
             String msg = "20//" +  intent.getIntExtra("user_num", -1) + "//";
             socket.sendMsg(msg);
+            mobileInfo = new MobileInfo(-1,"","");
         }
     }
 
@@ -185,9 +190,15 @@ public class SocketService extends Service {
                     int restNum = Integer.parseInt(msgArr[3 + 5 * i]);
                     String restName = msgArr[4 + 5 * i];
                     String categoryName = msgArr[5 + 5 * i];
+                    float fRestX = Float.parseFloat(msgArr[6 + 5 * i]);
+                    float fRestY = Float.parseFloat(msgArr[7 + 5 * i]);
+                    int restX = (int) fRestX;
+                    int restY = (int) fRestY;
                     nextIntent.putExtra("rest_num" + i, restNum);
                     nextIntent.putExtra("rest_name" + i, restName);
                     nextIntent.putExtra("category_name" + i, categoryName);
+                    nextIntent.putExtra("rest_x" + i, restX);
+                    nextIntent.putExtra("rest_y" + i, restY);
                 }
                 startActivity(nextIntent);
             } else if (cmd.equals("8")) {
@@ -263,6 +274,10 @@ public class SocketService extends Service {
                 chatHandler.sendMessage(alertMsg);
 
                 Log.d("SocketService", msg);
+            } else if (cmd.equals("16")) {
+                //top5 응답
+                String[] temp = {msgArr[1], msgArr[2], msgArr[3], msgArr[4], msgArr[5]};
+                mobileInfo.setUserTop5Food(temp);
             }
 
         }

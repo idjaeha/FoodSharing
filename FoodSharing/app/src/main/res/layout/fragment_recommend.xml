@@ -5,10 +5,108 @@
     android:layout_height="match_parent"
     tools:context=".RecommendFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/title_chat" />
+        android:orientation="vertical">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/textView_recommend_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:text="이런 음식은 어때요?"
+                    android:textSize="40sp"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="30dp"/>
+
+                <LinearLayout
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:background="#2B2B2B"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:id="@+id/imageView_recommend_1"
+                        android:layout_width="290dp"
+                        android:layout_height="190dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/recommend_1"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:background="#2B2B2B"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:id="@+id/imageView_recommend_2"
+                        android:layout_width="290dp"
+                        android:layout_height="190dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/recommend_2"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:background="#2B2B2B"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:id="@+id/imageView_recommend_3"
+                        android:layout_width="290dp"
+                        android:layout_height="190dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/recommend_3"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:background="#2B2B2B"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:id="@+id/imageView_recommend_4"
+                        android:layout_width="290dp"
+                        android:layout_height="190dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/recommend_4"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:background="#2B2B2B"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:id="@+id/imageView_recommend_5"
+                        android:layout_width="290dp"
+                        android:layout_height="190dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/recommend_5"/>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
 </FrameLayout>
