@@ -48,4 +48,37 @@ class StoreListAdapterInAct extends BaseAdapter {
         view.setStoreCategory(item.getStoreCategory());
         return view;
     }
+
+    public void sortItems() {
+        /*
+        item들을 사용자와의 거리 순으로 오름차순 정렬합니다.
+         */
+        ArrayList<StoreItem> tmp = new ArrayList<>();
+        int[] lengths = new int[items.size()];
+
+        // 거리를 계산하여 리스트에 넣습니다.
+        for (int idx = 0; idx < items.size(); idx++) {
+            int length = (mobileInfo.getX() - items.get(idx).getX()) * (mobileInfo.getX() - items.get(idx).getX()) +
+                    (mobileInfo.getY() - items.get(idx).getY()) * (mobileInfo.getY() - items.get(idx).getY());
+            lengths[idx] = length;
+        }
+
+        // 계산된 거리 값을 통해 정렬합니다.
+        for (int num = 0; num < items.size(); num++) {
+
+            //가장 작은 값의 idx를 구합니다.
+            int minIdx = 0;
+            int minValue = 999999999;
+            for (int idx = 0; idx < items.size(); idx++) {
+                if (lengths[idx] < minValue) {
+                    minValue = lengths[idx];
+                    minIdx = idx;
+                }
+            }
+            lengths[minIdx] = 999999999;
+            tmp.add(items.get(minIdx));
+        }
+
+        items = tmp;
+    }
 }

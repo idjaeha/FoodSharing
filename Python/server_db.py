@@ -101,9 +101,9 @@ class FoodServerDB:
         self.cur = self.conn.cursor()
 
         sql = "INSERT INTO search VALUES (?, ?, ?, ?)"
-        self.cur.execute(sql, values)
+        #self.cur.execute(sql, values)
         #많은 데이터를 넣고자 할때 사용
-        #self.cur.executemany(sql, values)
+        self.cur.executemany(sql, values)
 
         self.conn.commit()
         self.conn.close()

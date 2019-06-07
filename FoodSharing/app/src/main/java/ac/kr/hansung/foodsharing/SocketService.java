@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -108,6 +109,9 @@ public class SocketService extends Service {
             String msg = "20//" +  intent.getIntExtra("user_num", -1) + "//";
             socket.sendMsg(msg);
             mobileInfo = new MobileInfo(-1,"","");
+        } else if (command.equals("100")) {
+            String msg = "100//" + intent.getStringExtra("category") + "//" + mobileInfo.userNum + "//";
+            socket.sendMsg(msg);
         }
     }
 

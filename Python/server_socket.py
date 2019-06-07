@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 
 BUFSIZE = 512
 HOST = ''
-PORT = 10000
+PORT = 3000
 ADDR = (HOST, PORT)
 room_info = {}
 
@@ -94,12 +94,57 @@ class FoodServer:
             temp_times.append(start + (end - start) * random())
         temp_times.sort()
 
+
         for i in range(num):
             temp = []
             temp.append(i)
             temp.append(randint(0, 5))
             temp.append(temp_times[i])
             temp.append(randint(1, 60))
+            test_search.append(temp)
+
+        return test_search
+
+    def insert_search_data(self, category = None, user_num = None, num=500):
+        """
+        랜덤으로 유저의 검색 기록을 추가해주는 함수
+        :param num
+        :return:
+        """
+        test_search = []
+        start_num = self.food_server_db.get_data_num("search")
+
+        example = \
+            [["한식", "비빔밥", "불고기", "된장찌개", "김치찌개", "김치전", "떡갈비"],
+             ["중식", "자장면", "짬뽕", "탕수육", "깐풍기", "팔보채", "칠리새우"],
+             ["양식", "파스타", "스테이크", "샐러드", "오믈렛", "햄버거", "피자"],
+             ["일식", "초밥", "가츠동", "우동", "텐동", "라멘", "사시미"],
+             ["분식", "떡볶이", "김밥", "튀김", "순대", "오뎅", "주먹밥"]]
+
+        temp_times = []
+        # 랜덤으로 시간을 생성
+        for i in range(num):
+            start = datetime.now()
+            end = start + timedelta(days=7)
+            temp_times.append(start + (end - start) * random())
+        temp_times.sort()
+
+
+        for i in range(num):
+            temp = []
+            temp.append(start_num + i)
+            temp.append(user_num)
+            temp.append(temp_times[i])
+            if category == "한식":
+                temp.append(randint(1, 3))
+            elif category == "중식":
+                temp.append(randint(4, 6))
+            elif category == "양식":
+                temp.append(randint(7, 9))
+            elif category == "일식":
+                temp.append(randint(10, 12))
+            elif category == "분식":
+                temp.append(randint(13, 15))
             test_search.append(temp)
 
         return test_search
@@ -228,7 +273,7 @@ class FoodServer:
 
     def food_analysis(self, input_id_int, top5_list, user_ac_list):
         input_path = "./data/person/"
-        rows_num = 20
+        rows_num = 80
 
         # 현재 시간 전부
         currentTime = datetime.now()
@@ -464,11 +509,14 @@ class FoodServerReceiver(threading.Thread):
             id = msg_list[1]
             pwd = msg_list[2]
             rows = self.food_server_db.get_user_using_info(id, pwd)
+            print(rows)
             if len(rows) == 1:
                 user_num = str(rows[0][0])
+                print(user_num)
                 self.food_server.update_user_top5(user_num)
-                print(self.food_server.top5_list)
-                msg = "2//1//" + user_num + "//"  + "//".join(rows[0][1:]) + "//"
+                #print(self.food_server.top5_list)
+                msg = "2//1//" + user_num + "//" + "//".join(rows[0][1:]) + "//"
+                print(msg)
             else:
                 msg = "2//0//"
             self.send_msg(msg)
@@ -561,8 +609,46 @@ class FoodServerReceiver(threading.Thread):
             # 로그아웃
             user_num = msg_list[1]
             self.food_server.create_person_csv(user_num)
+        elif cmd == "100":
+            category = msg_list[1]
+            user_num = int(msg_list[2])
+            if category == "1":
+                # 한식
+                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("한식", user_num, 50))
+            elif category == "2":
+                # 중식
+                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("중식", user_num, 50))
+            elif category == "3":
+                # 양식
+                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("양식", user_num, 50))
+            elif category == "4":
+                # 일식
+                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("일식", user_num, 50))
+            elif category == "5":
+                # 분식
+                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("분식", user_num, 50))
+            elif category == "6":
+                self.init_data(self.food_server)
+            self.food_server.create_person_csv(user_num)
         else:
             self.send_msg("실패")
+
+    def init_data(self, food_server):
+        # 데이터 초기화
+        self.food_server.food_server_db.delete_all_data("search")
+        self.food_server.food_server_db.insert_search_data(food_server.create_search_data(600))
+
+        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("한식", 1, 100))
+        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("양식", 2, 100))
+        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("중식", 3, 100))
+        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("중식", 4, 50))
+        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("양식", 4, 50))
+        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("분식", 5, 100))
+
+        self.food_server.food_server_db.select_all_data("search")
+
+        for i in range(6):
+            self.food_server.create_person_csv(i)
 
 
     def send_msg(self, msg):

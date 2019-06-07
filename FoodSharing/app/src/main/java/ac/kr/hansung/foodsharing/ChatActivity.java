@@ -80,6 +80,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent msgIntent = new Intent(getApplicationContext(), SocketService.class);
                 String tempMsg = editTextChat.getText().toString();
+                if (tempMsg.equals("")) {
+                    return;
+                }
                 editTextChat.setText("");
                 String msg = "11//" + mobileInfo.userNum + "//" + mobileInfo.nickName + "//" + mobileInfo.foodNum +"//"+ tempMsg + "//";
                 msgIntent.putExtra("command", "11");

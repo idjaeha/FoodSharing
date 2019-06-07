@@ -44,6 +44,9 @@ public class StoreListActivity extends AppCompatActivity {
         int num = intent.getIntExtra("num", 0);
         for (int idx = 0; idx < num; idx++)
             adapter.addItem(new StoreItem(intent.getStringExtra("rest_name" + idx), intent.getStringExtra("category_name" + idx), intent.getIntExtra("rest_num" + idx, -1), intent.getIntExtra("rest_x" + idx, 0), intent.getIntExtra("rest_y" + idx, 0)));
+
+        // 음식점들을 거리 순으로 정렬합니다.
+        adapter.sortItems();
     }
 
 }
