@@ -132,19 +132,19 @@ class FoodServer:
 
         for i in range(num):
             temp = []
-            temp.append(start_num + i)
-            temp.append(user_num)
+            temp.append(start_num + i + 1)
+            temp.append(str(user_num))
             temp.append(temp_times[i])
             if category == "한식":
-                temp.append(randint(1, 3))
+                temp.append(str(randint(1, 3)))
             elif category == "중식":
-                temp.append(randint(4, 6))
+                temp.append(str(randint(4, 6)))
             elif category == "양식":
-                temp.append(randint(7, 9))
+                temp.append(str(randint(7, 9)))
             elif category == "일식":
-                temp.append(randint(10, 12))
+                temp.append(str(randint(10, 12)))
             elif category == "분식":
-                temp.append(randint(13, 15))
+                temp.append(str(randint(13, 15)))
             test_search.append(temp)
 
         return test_search
@@ -265,8 +265,7 @@ class FoodServer:
         """
         num = self.food_server_db.get_data_num("search") + 1
         search_value = [num, user_num, datetime.now(), food_num]
-
-        self.food_server_db.insert_search_data(search_value, True)
+        self.food_server_db.insert_search_data(search_value)
 
     def create_basic_table(self):
         self.food_server_db.create_table()
@@ -575,14 +574,11 @@ class FoodServerReceiver(threading.Thread):
 
             # 검색 내용 추가
             user_num = msg_list[2]
-            print(msg_list)
             self.food_server.add_search_data(user_num, food_num)
-            print(msg_list[2])
 
             # 이미 방에 있는 사람들에게 입장 알림
             if num:
                 msg = "10//{0}//{1}//{2}//{3}//{4}//".format(rest_name, food_name, num, nick_name, 0)
-                print("msg")
                 for c_s in room_info[food_num]:
                     if c_s != self.client_socket:
                         self.send_msg_using_socket(msg, c_s)
@@ -617,19 +613,19 @@ class FoodServerReceiver(threading.Thread):
             user_num = int(msg_list[2])
             if category == "1":
                 # 한식
-                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("한식", user_num, 50))
+                self.food_server.food_server_db.insert_search_datas(self.food_server.insert_search_data("한식", user_num, 50))
             elif category == "2":
                 # 중식
-                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("중식", user_num, 50))
+                self.food_server.food_server_db.insert_search_datas(self.food_server.insert_search_data("중식", user_num, 50))
             elif category == "3":
                 # 양식
-                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("양식", user_num, 50))
+                self.food_server.food_server_db.insert_search_datas(self.food_server.insert_search_data("양식", user_num, 50))
             elif category == "4":
                 # 일식
-                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("일식", user_num, 50))
+                self.food_server.food_server_db.insert_search_datas(self.food_server.insert_search_data("일식", user_num, 50))
             elif category == "5":
                 # 분식
-                self.food_server.food_server_db.insert_search_data(self.food_server.insert_search_data("분식", user_num, 50))
+                self.food_server.food_server_db.insert_search_datas(self.food_server.insert_search_data("분식", user_num, 50))
             elif category == "6":
                 self.init_data(self.food_server)
             self.food_server.create_person_csv(user_num)
@@ -639,14 +635,14 @@ class FoodServerReceiver(threading.Thread):
     def init_data(self, food_server):
         # 데이터 초기화
         self.food_server.food_server_db.delete_all_data("search")
-        self.food_server.food_server_db.insert_search_data(food_server.create_search_data(600))
+        self.food_server.food_server_db.insert_search_datas(food_server.create_search_data(600))
 
-        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("한식", 1, 100))
-        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("양식", 2, 100))
-        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("중식", 3, 100))
-        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("중식", 4, 50))
-        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("양식", 4, 50))
-        self.food_server.food_server_db.insert_search_data(food_server.insert_search_data("분식", 5, 100))
+        self.food_server.food_server_db.insert_search_datas(food_server.insert_search_data("한식", 1, 100))
+        self.food_server.food_server_db.insert_search_datas(food_server.insert_search_data("양식", 2, 100))
+        self.food_server.food_server_db.insert_search_datas(food_server.insert_search_data("중식", 3, 100))
+        self.food_server.food_server_db.insert_search_datas(food_server.insert_search_data("중식", 4, 50))
+        self.food_server.food_server_db.insert_search_datas(food_server.insert_search_data("양식", 4, 50))
+        self.food_server.food_server_db.insert_search_datas(food_server.insert_search_data("분식", 5, 100))
 
         self.food_server.food_server_db.select_all_data("search")
 
