@@ -91,7 +91,7 @@ class FoodServerDB:
         self.conn.commit()
         self.conn.close()
 
-    def insert_search_data(self, values):
+    def insert_search_data(self, values, flag=False):
         """
         해당 테이블에 데이터를 넣습니다.
         :param values:
@@ -101,9 +101,11 @@ class FoodServerDB:
         self.cur = self.conn.cursor()
 
         sql = "INSERT INTO search VALUES (?, ?, ?, ?)"
-        #self.cur.execute(sql, values)
-        #많은 데이터를 넣고자 할때 사용
-        self.cur.executemany(sql, values)
+        if flag:
+            self.cur.execute(sql, values)
+        else :
+            # 많은 데이터를 넣고자 할때 사용
+            self.cur.executemany(sql, values)
 
         self.conn.commit()
         self.conn.close()

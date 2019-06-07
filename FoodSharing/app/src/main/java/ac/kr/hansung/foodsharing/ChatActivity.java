@@ -69,7 +69,7 @@ public class ChatActivity extends AppCompatActivity {
                     String nickName = msg.getData().getString("nick_name");
                     textViewNum.setText(num + "명");
                     ChatAlertView tmpLayout = new ChatAlertView(getApplicationContext());
-                    tmpLayout.setMsg(nickName + " 님이 입장하였습니다..");
+                    tmpLayout.setMsg(nickName + " 님이 입장하였습니다.");
                     layoutChat.addView(tmpLayout);
                 }
             }

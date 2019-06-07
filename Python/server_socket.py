@@ -266,7 +266,7 @@ class FoodServer:
         num = self.food_server_db.get_data_num("search") + 1
         search_value = [num, user_num, datetime.now(), food_num]
 
-        self.food_server_db.insert_search_data(search_value)
+        self.food_server_db.insert_search_data(search_value, True)
 
     def create_basic_table(self):
         self.food_server_db.create_table()
@@ -575,11 +575,14 @@ class FoodServerReceiver(threading.Thread):
 
             # 검색 내용 추가
             user_num = msg_list[2]
+            print(msg_list)
             self.food_server.add_search_data(user_num, food_num)
+            print(msg_list[2])
 
             # 이미 방에 있는 사람들에게 입장 알림
             if num:
                 msg = "10//{0}//{1}//{2}//{3}//{4}//".format(rest_name, food_name, num, nick_name, 0)
+                print("msg")
                 for c_s in room_info[food_num]:
                     if c_s != self.client_socket:
                         self.send_msg_using_socket(msg, c_s)
